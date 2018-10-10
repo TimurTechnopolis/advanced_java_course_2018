@@ -1,43 +1,89 @@
-package edu.technopolis.advjava;
 
-import java.io.Serializable;
+import java.util.stream.IntStream;
 
-/**
- * Реализованная специальным образом строка (аналог {@link java.lang.String}),
- * хранящий содержимое строки кусочкам (chunks) для лучшего переиспользования памяти при активном
- * создании подстрок.
- */
-public class CustomString implements CharSequence, Serializable {
-    private final char[][] chunks;
+public class CustomString implements CharSequence {
+    private char [][] ch;
+    private int offset;
+    private int count;
+    private int lengthChunk = 0;
 
-    /*
-     * todo add complimentary fields if required
-     */
+    private boolean isSqrt(int i ){
+        int j =0;
+        while (j*j<i){
+            j++;
+        }
+        if(j*j == i)
+            return true;
+        return false;
+    }
 
+    public CustomString(char [][] ch, int offset, int count, int lengthChunk){
+        this.ch = ch;
+        this.offset = offset;
+        this.count = count;
+        this.lengthChunk = lengthChunk;
+    }
 
-    /*
-     * todo add constructor or group of constructors
-     */
-
+    public CustomString(String value){
+        offset  = 0;
+        count = value.length();
+        lengthChunk = (int) Math.sqrt(count);
+        int amountChunk = isSqrt(count)? count/lengthChunk : count/lengthChunk + 1;
+        ch  = new char[amountChunk][lengthChunk];
+        for(int i = 0, m = 0; i<amountChunk ; i++){
+            for(int j = 0; (j<lengthChunk) && (m<count); j++){
+                ch[i][j] = value.charAt(m);
+                m++;
+            }
+        }
+    }
 
     @Override
     public int length() {
-        //todo implement length here
+        return count;
     }
 
     @Override
     public char charAt(int index) {
-        //todo implement charAt here
+        if((offset + index >= count)||(offset + index < count))
+            throw new NullPointerException();
+        int chunk = (offset + index)/lengthChunk;
+        int in =  (offset + index)%lengthChunk;
+        return ch[chunk][in];
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        //todo implement subSequence here
+        return null;
+    }
+
+    public CustomString subString(int start, int end){
+        if((end >= count)||(start< offset)||(start>end))
+            throw new NullPointerException();
+        return new CustomString(ch, offset+start, offset+end-start+1, lengthChunk);
+    }
+
+    public String toString (){
+        StringBuffer res = new StringBuffer();
+        int amountChunk = isSqrt(count)? count/lengthChunk : count/lengthChunk + 1;
+        int i = offset/lengthChunk;
+        for(int j = offset%lengthChunk; j<count ; j++){
+            if(j == lengthChunk)
+                i++;
+            res.append(ch[i][j%lengthChunk]);
+
+        }
+        return res.toString();
     }
 
     @Override
-    public String toString() {
-        //todo fold chunks into single char array
-        return new String(/* place folded char array here */);
+    public IntStream chars() {
+        return null;
     }
+
+    @Override
+    public IntStream codePoints() {
+        return null;
+    }
+
 }
