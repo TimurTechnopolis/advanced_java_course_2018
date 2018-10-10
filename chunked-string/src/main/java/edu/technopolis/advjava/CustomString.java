@@ -10,6 +10,10 @@ import java.io.Serializable;
 public class CustomString implements CharSequence, Serializable {
     private final char[][] chunks;
 
+    public CustomString(char[][] chunks) {
+        this.chunks = chunks;
+    }
+
     /*
      * todo add complimentary fields if required
      */
@@ -23,16 +27,19 @@ public class CustomString implements CharSequence, Serializable {
     @Override
     public int length() {
         //todo implement length here
+        return 0;
     }
 
     @Override
     public char charAt(int index) {
         //todo implement charAt here
+        return 0;
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
         //todo implement subSequence here
+        return null;
     }
 
     @Override
