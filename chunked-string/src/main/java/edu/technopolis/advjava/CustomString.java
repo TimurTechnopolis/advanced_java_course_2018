@@ -11,33 +11,71 @@ public class CustomString implements CharSequence, Serializable {
     private final char[][] chunks;
 
     /*
-     * todo add complimentary fields if required
+     * complimentary according to Java 6
      */
-
+    private final int offset;
+    private final int count;
+    private final int chunkLength;
 
     /*
-     * todo add constructor or group of constructors
+     * group of constructors
      */
+    public CustomString(char chunks[][],int chunkLength, int offset, int count) {
+        this.offset = offset;
+        this.count = count;
+        this.chunks = chunks;
+        this.chunkLength = chunkLength;
+    }
 
+    public CustomString(String value, int chunkLength) {
+        this(value, chunkLength, 0, value.length());
+    }
+
+    public CustomString(String value, int chunkLength, int offset, int count) {
+        this.offset = offset;
+        this.count = count;
+        this.chunkLength = chunkLength;
+        int amountOfChunks = this.count%chunkLength==0 ? this.count/chunkLength : this.count/chunkLength+1;
+        this.chunks = new char[amountOfChunks][chunkLength];
+        for (int i = 0; i < amountOfChunks; i++) {
+            for (int j = 0; j < chunkLength; j++) {
+                if (i*chunkLength+j < this.count) {
+                    chunks[i][j] = value.charAt(i * chunkLength + j);
+                }
+            }
+        }
+
+    }
+
+    public CustomString(String value) {
+        this(value, 100);
+    }
 
     @Override
     public int length() {
-        //todo implement length here
+        return count;
     }
 
     @Override
     public char charAt(int index) {
-        //todo implement charAt here
+        return chunks[(offset+index)/chunkLength][(offset+index)%chunkLength];
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        //todo implement subSequence here
+        return null;
+    }
+
+    public CustomString subCustomString(int start, int end) {
+        return new  CustomString(chunks, this.chunkLength, offset+start, offset+end-start);
     }
 
     @Override
     public String toString() {
-        //todo fold chunks into single char array
-        return new String(/* place folded char array here */);
+        StringBuilder str = new StringBuilder(this.count);
+        for (int i = offset; i < this.count; i++) {
+            str.append(chunks[i/chunkLength][i%chunkLength]);
+        }
+        return new String(str);
     }
 }
