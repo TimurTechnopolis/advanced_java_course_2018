@@ -1,6 +1,13 @@
 package edu.technopolis.advjava;
 
-public class CustomString implements CharSequence {
+import java.io.Serializable;
+
+/**
+ * Реализованная специальным образом строка (аналог {@link java.lang.String}),
+ * хранящий содержимое строки кусочкам (chunks) для лучшего переиспользования памяти при активном
+ * создании подстрок.
+ */
+public class CustomString implements CharSequence, Serializable {
 
     private char[][] chunks;
 
@@ -57,16 +64,14 @@ public class CustomString implements CharSequence {
             }
         }
 
-        if (end <= chunks[leftChunk].length) { // [start, end) IN one chunk
+        if (start == 0 && end == chunks[leftChunk].length) { // chunk already exists
+            return new CustomString(chunks[leftChunk]);
+        } else if (end <= chunks[leftChunk].length) { // [start, end) IN one chunk
             // [0, start) + [start, end) + [end, N]
             char[][] split = splitChunk(chunks[leftChunk], start, end);
             if (start == 0) {
-                if (end == chunks[leftChunk].length) {
-                    return new CustomString(chunks[leftChunk]);
-                } else {
-                    replaceChunk(leftChunk, split[1], split[2]);
-                    return new CustomString(split[1]);
-                }
+                replaceChunk(leftChunk, split[1], split[2]);
+                return new CustomString(split[1]);
             } else if (end == chunks[leftChunk].length) {
                 replaceChunk(leftChunk, split[0], split[1]);
                 return new CustomString(split[1]);
