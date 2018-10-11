@@ -1,5 +1,6 @@
 package main.java.edu.technopolis.advjava;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Arrays;
  * массиву, и содержимое внутренних считать элементарной логической единицой, от которой можно
  * брать подстроку. Такой элемнетарной единицей будет "слово"
  */
-public class CustomString implements CharSequence{
+public class CustomString implements CharSequence, Serializable{
 
     //Буду резать по пробелам => [слова][буквы слова]
     private final char[][] value;
