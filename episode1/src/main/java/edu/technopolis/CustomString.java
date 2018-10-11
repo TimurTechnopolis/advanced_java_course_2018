@@ -1,9 +1,10 @@
 package edu.technopolis;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class CustomString implements CharSequence { // Имплементим нужный нам интерфейс
+public class CustomString implements CharSequence, Serializable { // Имплементим нужный нам интерфейс
     private final int offset; // Начало строки
     private final int count; // Кол-во символов
 
