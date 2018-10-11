@@ -85,27 +85,56 @@ public class CustomString implements CharSequence, Serializable {
         //todo implement subSequence here
         int offsetIndex = 0;
         int endIndex = 0;
+
+        char[][] result;
+
+        char[] firstChunk = new char[0];
+        char[] lastChunk = new char[0];
+
         if (start < end){
-            int summ = 0;
-            int razn = length;
+            int endOfChunk = 0;
+            int beginOfChunk = length;
 
+
+            int positionInChunkStart = 0;
+            int positionInChunkEnd = 0;
             for (int i = 0; i < chunks.length; i++) {
-                summ += chunks[i].length;
-                if (start < summ){
+                endOfChunk += chunks[i].length;
+                if (start <= endOfChunk){
                     offsetIndex = i;
+                    positionInChunkStart = chunks[i].length - 1 - (endOfChunk - start);
+                    firstChunk = new String(chunks[i]).substring(positionInChunkStart).toCharArray();
                     break;
                 }
             }
 
-            for (int i = chunks.length; i > 0; i--) {
-                razn -= chunks[i].length;
-                if (start > razn){
+            for (int i = chunks.length - 1; i > 0; i--) {
+                beginOfChunk -= (chunks[i].length - 1);
+                if (start >= beginOfChunk){
                     endIndex = i;
+                    positionInChunkEnd = start - beginOfChunk;
+                        lastChunk = new String(chunks[i]).substring(0, positionInChunkEnd).toCharArray();
                     break;
                 }
             }
+
+            result = new char[endIndex - offsetIndex + 1][];
+
+            if (result.length == 1){
+                result[0] = new char[positionInChunkEnd - positionInChunkStart + 1];
+                result[0] = new String(lastChunk).substring(positionInChunkStart).toCharArray();
+            }else {
+                result[0] = firstChunk;
+                offsetIndex++;
+                for (int i = 1; i < result.length - 1; i++){
+                    result[i] = chunks[offsetIndex++];
+                }
+                result[result.length - 1] = lastChunk;
+            }
+            return new CustomString(result);
+        }else {
+            return null;
         }
-        return null;
     }
 
     @Override

@@ -21,6 +21,8 @@ public class TestCustomString {
         CustomString customString = new CustomString(stringBuilder.toString());
         System.out.println(customString.charAt(6));
 
+        System.out.println(customString.subSequence(5,26));
+
         System.out.println(customString);
     }
 
