@@ -1,6 +1,7 @@
 package edu.technopolis.advjava;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -10,18 +11,11 @@ import java.util.Arrays;
  */
 public class CustomString implements CharSequence, Serializable {
     private final char[][] chunks;
-
-    /*
-     * todo add complimentary fields if required
-     */
     private final int CHUNKS_LENGTH;
     private static int defaultChunksLength = 10;
     private int offset;
     private int flang;
 
-    /*
-     * todo add constructor or group of constructors
-     */
     CustomString(char[][] chunks) {
         this.CHUNKS_LENGTH = chunks[0].length;
         for (char[] a : chunks){
@@ -45,7 +39,7 @@ public class CustomString implements CharSequence, Serializable {
         this.CHUNKS_LENGTH = chunksLength;
         this.offset = 0;
         int tmp = (inputString.length() / CHUNKS_LENGTH);
-        int size = chunksLength > 1 ? tmp + 1 : tmp;
+        int size = (chunksLength == 1 || inputString.length() % CHUNKS_LENGTH == 0) ? tmp : tmp + 1;
         this.chunks = new char[size][CHUNKS_LENGTH];
         int iterator = 0;
         for (int i = 0; i < chunks.length; i++) {
@@ -71,7 +65,7 @@ public class CustomString implements CharSequence, Serializable {
         if (index < 0 || index >= this.length()){
             throw new IndexOutOfBoundsException();
         }
-        //todo implement charAt here
+
         int i = index == 0 ? index : ((index - offset) / CHUNKS_LENGTH);
         int j = (index + offset) % CHUNKS_LENGTH;
         return chunks[i][j];
@@ -85,7 +79,6 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public String toString() {
-        //todo fold chunks into single char array
         StringBuilder stringBuilder = new StringBuilder();
         for (char[] chars : chunks) {
             for (char a : chars) {
@@ -104,6 +97,35 @@ public class CustomString implements CharSequence, Serializable {
             stringBuilder.append(i++).append(": ").append(Arrays.toString(chars).replaceAll("\n", "\\\\n")).append('\n');
         }
         System.out.println(stringBuilder.toString());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+
+        if (!(obj instanceof CustomString)){
+            return false;
+        }
+
+        CustomString otherObject = (CustomString)obj;
+
+        boolean content = Arrays.deepEquals(this.chunks, otherObject.chunks);
+        boolean chunksSize = this.CHUNKS_LENGTH == otherObject.CHUNKS_LENGTH;
+        boolean offset = this.offset == otherObject.offset;
+        boolean flang = this.flang == otherObject.flang;
+        return content && chunksSize && offset && flang;
+    }
+
+    @Override
+    public int hashCode() {
+        BigInteger bigInteger = BigInteger.valueOf(0);
+        for (char[] chunk : chunks) {
+            bigInteger = bigInteger.add(BigInteger.valueOf(Arrays.hashCode(chunk)));
+        }
+        bigInteger = bigInteger.divide(BigInteger.valueOf(CHUNKS_LENGTH));
+        return bigInteger.hashCode();
     }
 
     public int getFlang() {
