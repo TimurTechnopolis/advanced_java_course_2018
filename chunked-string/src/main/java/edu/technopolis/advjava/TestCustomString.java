@@ -22,6 +22,10 @@ public class TestCustomString {
 
         System.out.println("testString length: " + testString.length());
         System.out.println("customString length: " + customString.length());
+
+        System.out.println(customString.charAt(0));
+        System.out.println(customString.charAt(18));
+        System.out.println(customString.charAt(194));
     }
 
 }

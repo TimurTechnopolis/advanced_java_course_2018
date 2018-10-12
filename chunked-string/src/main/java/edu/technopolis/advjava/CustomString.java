@@ -28,7 +28,7 @@ public class CustomString implements CharSequence, Serializable {
 
     CustomString(String inputString) {
         this.offset = 0;
-        chunks = new char[(inputString.length() / 10) + 1][CHUNKS_LENGTH];
+        chunks = new char[(inputString.length() / CHUNKS_LENGTH) + 1][CHUNKS_LENGTH];
         int iterator = 0;
         for (int i = 0; i < chunks.length; i++) {
             for (int j = 0; j < CHUNKS_LENGTH; j++) {
@@ -36,7 +36,7 @@ public class CustomString implements CharSequence, Serializable {
                     break;
                 }
                 chunks[i][j] = inputString.charAt(iterator);
-                this.offset = j;
+                this.flang = j;
                 iterator++;
             }
         }
@@ -44,13 +44,19 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public int length() {
-        return chunks.length * CHUNKS_LENGTH - (offset + 1) - (CHUNKS_LENGTH - flang + 1);
+        int edge = CHUNKS_LENGTH - (flang + 1);
+        return chunks.length * CHUNKS_LENGTH - offset - edge;
     }
 
     @Override
     public char charAt(int index) {
+        if (index < 0 || index >= this.length()){
+            throw new IndexOutOfBoundsException();
+        }
         //todo implement charAt here
-        return 0;
+        int i = index == 0 ? index : ((index - offset) / CHUNKS_LENGTH);
+        int j = (index + offset) % CHUNKS_LENGTH;
+        return chunks[i][j];
     }
 
     @Override
@@ -64,8 +70,8 @@ public class CustomString implements CharSequence, Serializable {
         //todo fold chunks into single char array
         StringBuilder stringBuilder = new StringBuilder();
         for (char[] chars : chunks) {
-            for (char a : chars){
-                if (a != '\u0000'){
+            for (char a : chars) {
+                if (a != '\u0000') {
                     stringBuilder.append(a);
                 }
             }
@@ -74,7 +80,7 @@ public class CustomString implements CharSequence, Serializable {
     }
 
     void printChunks() {
-        for (char[] chars : chunks){
+        for (char[] chars : chunks) {
             System.out.println(chars);
         }
     }
