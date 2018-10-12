@@ -1,6 +1,7 @@
 package edu.technopolis.advjava;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Реализованная специальным образом строка (аналог {@link java.lang.String}),
@@ -13,22 +14,39 @@ public class CustomString implements CharSequence, Serializable {
     /*
      * todo add complimentary fields if required
      */
-    private static final int CHUNKS_LENGTH = 10;
+    private final int CHUNKS_LENGTH;
+    private static int defaultChunksLength = 10;
     private int offset;
     private int flang;
 
     /*
      * todo add constructor or group of constructors
      */
-    public CustomString(char[][] chunks) {
+    CustomString(char[][] chunks) {
+        this.CHUNKS_LENGTH = chunks[0].length;
+        for (char[] a : chunks){
+            if (a.length != CHUNKS_LENGTH){
+                throw new IllegalStateException("Чанки не фиксированной длинны");
+            }
+        }
         this.chunks = chunks;
         this.offset = 0;
         this.flang = CHUNKS_LENGTH - 1;
     }
 
-    CustomString(String inputString) {
+    CustomString(String inputSting){
+        this(inputSting, defaultChunksLength);
+    }
+
+    CustomString(String inputString, int chunksLength) {
+        if (chunksLength < 1){
+            throw new IndexOutOfBoundsException();
+        }
+        this.CHUNKS_LENGTH = chunksLength;
         this.offset = 0;
-        chunks = new char[(inputString.length() / CHUNKS_LENGTH) + 1][CHUNKS_LENGTH];
+        int tmp = (inputString.length() / CHUNKS_LENGTH);
+        int size = chunksLength > 1 ? tmp + 1 : tmp;
+        this.chunks = new char[size][CHUNKS_LENGTH];
         int iterator = 0;
         for (int i = 0; i < chunks.length; i++) {
             for (int j = 0; j < CHUNKS_LENGTH; j++) {
@@ -80,9 +98,12 @@ public class CustomString implements CharSequence, Serializable {
     }
 
     void printChunks() {
+        StringBuilder stringBuilder = new StringBuilder();
+        int i = 1;
         for (char[] chars : chunks) {
-            System.out.println(chars);
+            stringBuilder.append(i++).append(": ").append(Arrays.toString(chars).replaceAll("\n", "\\\\n")).append('\n');
         }
+        System.out.println(stringBuilder.toString());
     }
 
     public int getFlang() {
