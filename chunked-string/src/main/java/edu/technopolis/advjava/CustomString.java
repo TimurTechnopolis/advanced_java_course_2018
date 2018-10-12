@@ -11,7 +11,7 @@ public class CustomString implements CharSequence, Serializable {
     private final char[][] chunks;
 
     /*
-     * complimentary according to Java 6
+     * complimentary fields according to Java 6
      */
     private final int offset;
     private final int count;
@@ -21,19 +21,28 @@ public class CustomString implements CharSequence, Serializable {
      * group of constructors
      */
     public CustomString(char chunks[][],int chunkLength, int offset, int count) {
-        this.offset = offset;
+        this.offset = offset % chunkLength;
         this.count = count;
-        this.chunks = chunks;
         this.chunkLength = chunkLength;
+        int firstChunk = offset/chunkLength;
+        int chunkAmount = (offset+count)/chunkLength > 0 ? (offset+count)/chunkLength : 1;
+        this.chunks = new char[chunkAmount][chunkLength];
+        for (int i = 0; i < chunkAmount; i++) {
+            for (int j = 0; j < chunkLength; j++) {
+                if (i*chunkLength+j-this.offset < this.count) {
+                    this.chunks[i][j] = chunks[firstChunk+i][j];
+                }
+            }
+        }
     }
 
     public CustomString(String value, int chunkLength) {
-        this(value, chunkLength, 0, value.length());
-    }
-
-    public CustomString(String value, int chunkLength, int offset, int count) {
-        this.offset = offset;
-        this.count = count;
+        if (chunkLength < 1) {
+            throw new IndexOutOfBoundsException("Out of bounds!");
+        }
+        if (value == null) { throw new NullPointerException("String is null!"); }
+        this.offset = 0;
+        this.count = value.length();
         this.chunkLength = chunkLength;
         int amountOfChunks = this.count%chunkLength==0 ? this.count/chunkLength : this.count/chunkLength+1;
         this.chunks = new char[amountOfChunks][chunkLength];
@@ -58,22 +67,22 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public char charAt(int index) {
+        if (index > count || index < 0) { throw new IndexOutOfBoundsException("Out of bounds!"); }
         return chunks[(offset+index)/chunkLength][(offset+index)%chunkLength];
     }
 
     @Override
-    public CharSequence subSequence(int start, int end) {
-        return null;
-    }
+    public CustomString subSequence(int start, int end) {
+        //todo implement subSequence here
+        if (start < 0 || end < start || end > this.count) { throw new IndexOutOfBoundsException("Out of bounds!"); }
 
-    public CustomString subCustomString(int start, int end) {
         return new  CustomString(chunks, this.chunkLength, offset+start, offset+end-start);
     }
 
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder(this.count);
-        for (int i = offset; i < this.count; i++) {
+        for (int i = this.offset; i < this.count+this.offset; i++) {
             str.append(chunks[i/chunkLength][i%chunkLength]);
         }
         return new String(str);
