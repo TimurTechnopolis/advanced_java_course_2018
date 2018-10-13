@@ -87,7 +87,7 @@ public class CustomString implements CharSequence, Serializable {
         int inIndex = (start + offset) / CHUNKS_LENGTH;
         int outIndex = (end + offset) / CHUNKS_LENGTH;
 
-        resultChunks = new char[outIndex - inIndex + 1][CHUNKS_LENGTH];
+        resultChunks = new char[outIndex - inIndex + 1][];
 
         for (int i = inIndex, j = 0; i < outIndex + 1; i++, j++) {
             resultChunks[j] = this.chunks[i];
