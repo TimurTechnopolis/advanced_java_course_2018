@@ -18,8 +18,8 @@ public class CustomString implements CharSequence, Serializable {
 
     CustomString(char[][] chunks) {
         this.CHUNKS_LENGTH = chunks[0].length;
-        for (char[] a : chunks){
-            if (a.length != CHUNKS_LENGTH){
+        for (char[] a : chunks) {
+            if (a.length != CHUNKS_LENGTH) {
                 throw new IllegalStateException("Чанки не фиксированной длинны");
             }
         }
@@ -28,12 +28,12 @@ public class CustomString implements CharSequence, Serializable {
         this.flang = CHUNKS_LENGTH - 1;
     }
 
-    CustomString(String inputSting){
+    CustomString(String inputSting) {
         this(inputSting, defaultChunksLength);
     }
 
     CustomString(String inputString, int chunksLength) {
-        if (chunksLength < 1){
+        if (chunksLength < 1) {
             throw new IndexOutOfBoundsException();
         }
         this.CHUNKS_LENGTH = chunksLength;
@@ -54,6 +54,13 @@ public class CustomString implements CharSequence, Serializable {
         }
     }
 
+    private CustomString(char[][] chunks, int chunksLength, int offset, int flang) {
+        this.chunks = chunks;
+        this.CHUNKS_LENGTH = chunksLength;
+        this.offset = offset;
+        this.flang = flang;
+    }
+
     @Override
     public int length() {
         int edge = CHUNKS_LENGTH - (flang + 1);
@@ -62,28 +69,46 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public char charAt(int index) {
-        if (index < 0 || index >= this.length()){
+        if (index < 0 || index >= this.length()) {
             throw new IndexOutOfBoundsException();
         }
 
-        int i = index == 0 ? index : ((index - offset) / CHUNKS_LENGTH);
+        int i =  (index + offset) / CHUNKS_LENGTH;
         int j = (index + offset) % CHUNKS_LENGTH;
         return chunks[i][j];
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        //todo implement subSequence here
-        return null;
+        char[][] resultChunks;
+        int resultOffset;
+        int resultFlang;
+
+        int inIndex = (start + offset) / CHUNKS_LENGTH;
+        int outIndex = (end + offset) / CHUNKS_LENGTH;
+
+        resultChunks = new char[outIndex - inIndex + 1][CHUNKS_LENGTH];
+
+        for (int i = inIndex, j = 0; i < outIndex + 1; i++, j++) {
+            System.arraycopy(this.chunks[i], 0, resultChunks[j], 0, CHUNKS_LENGTH);
+        }
+
+
+        resultOffset = start % CHUNKS_LENGTH;
+        resultFlang = end % CHUNKS_LENGTH - 1;
+
+        return new CustomString(resultChunks, CHUNKS_LENGTH, resultOffset, resultFlang);
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (char[] chars : chunks) {
-            for (char a : chars) {
-                if (a != '\u0000') {
-                    stringBuilder.append(a);
+        for (int i = 0; i < chunks.length; i++) {
+            int start = i == 0 ? offset : 0;
+            int end = i == chunks.length - 1 ? flang + 1 : CHUNKS_LENGTH;
+            for (int j = start; j < end; j++) {
+                if (chunks[i][j] != '\u0000') {
+                    stringBuilder.append(chunks[i][j]);
                 }
             }
         }
@@ -101,15 +126,15 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj){
+        if (this == obj) {
             return true;
         }
 
-        if (!(obj instanceof CustomString)){
+        if (!(obj instanceof CustomString)) {
             return false;
         }
 
-        CustomString otherObject = (CustomString)obj;
+        CustomString otherObject = (CustomString) obj;
 
         boolean content = Arrays.deepEquals(this.chunks, otherObject.chunks);
         boolean chunksSize = this.CHUNKS_LENGTH == otherObject.CHUNKS_LENGTH;
@@ -128,11 +153,11 @@ public class CustomString implements CharSequence, Serializable {
         return bigInteger.hashCode();
     }
 
-    public int getFlang() {
+    int getFlang() {
         return flang;
     }
 
-    public int getOffset() {
+    int getOffset() {
         return offset;
     }
 }
