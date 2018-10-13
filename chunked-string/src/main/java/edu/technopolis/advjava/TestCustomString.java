@@ -1,7 +1,5 @@
 package edu.technopolis.advjava;
 
-import java.util.Scanner;
-
 public class TestCustomString {
 
     public static void main(String[] args) {
