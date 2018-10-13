@@ -90,7 +90,7 @@ public class CustomString implements CharSequence, Serializable {
         resultChunks = new char[outIndex - inIndex + 1][CHUNKS_LENGTH];
 
         for (int i = inIndex, j = 0; i < outIndex + 1; i++, j++) {
-            System.arraycopy(this.chunks[i], 0, resultChunks[j], 0, CHUNKS_LENGTH);
+            resultChunks[j] = this.chunks[i];
         }
 
 
