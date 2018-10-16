@@ -4,10 +4,7 @@ import java.nio.CharBuffer;
 
 public class CustomString implements CharSequence {
 
-    private int length;
-    private int chunksCount;
-    private int chunkLength;
-
+    private int length, chunkLength;
     private char[][] storage;
 
     @Override
@@ -60,18 +57,16 @@ public class CustomString implements CharSequence {
     public CustomString(CharSequence input) {
 
         length = input.length();
-        chunksCount = 30_000;
+        chunkLength = 256;
 
-        chunkLength = length / chunksCount;
-
-        if (length % chunksCount != 0) {
-            chunkLength++;
-        }
-
-        chunksCount = length / chunkLength;
+        int chunksCount = length / chunkLength;
 
         if (length % chunkLength != 0) {
             chunksCount++;
+        }
+
+        if (chunksCount == 1) {
+            chunkLength = length;
         }
 
         storage = new char[chunksCount][chunkLength];
