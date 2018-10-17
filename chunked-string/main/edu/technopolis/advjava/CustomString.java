@@ -8,7 +8,7 @@ import java.io.Serializable;
  * создании подстрок.
  */
 public class CustomString implements CharSequence, Serializable {
-    private final char[][] chunks;
+    private final char[][] chunks = new char[0][0];
 
     /*
      * todo add complimentary fields if required
