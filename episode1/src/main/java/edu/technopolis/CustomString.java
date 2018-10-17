@@ -29,7 +29,7 @@ public class CustomString implements CharSequence {
     }
 
     private CustomString(char[][] inputArray) {
-        this.arrayOfChars = inputArray;
+        arrayOfChars = inputArray;
     }
 
     public char[][] GetArrayOfChars() {
