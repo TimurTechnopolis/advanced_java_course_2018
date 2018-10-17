@@ -11,10 +11,7 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     private final int length; // Длина всех чанков
 
     // Конструктор для создания новой строки
-    CustomString(String s) throws Exception {
-        if (s == null || s.equals("")) {
-            throw new Exception("String can't be empty!");
-        }
+    CustomString(String s) {
         length = s.length();
         offset = 0; // Так как находимся в начале этой строки
         count = length;
@@ -86,6 +83,9 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     //Получение строки из чанков
     @Override
     public String toString() {
+        if (m.length == 0) { //Проверка на пустую строку
+            return "";
+        }
         StringBuilder s = new StringBuilder(); // Для оптимизации
         int tmp = m[0][0] == '\uFEFF' ? 1 : 0; // В начале файла стоит \uFEFF, поэтому отбрасываем его, если читаем введенную строку
         for (int i = 0; i < count; i++) {
