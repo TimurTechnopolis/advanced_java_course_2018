@@ -1,10 +1,9 @@
 package edu.technopolis;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class CustomString implements CharSequence, Serializable { // Имплементим нужный нам интерфейс
+public class CharSequence implements java.lang.CharSequence, Serializable { // Имплементим нужный нам интерфейс
     private final int offset; // Начало строки
     private final int count; // Кол-во символов
 
@@ -12,18 +11,22 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     private final int length; // Длина всех чанков
 
     // Конструктор для создания новой строки
-    CustomString(String s) {
+    CharSequence(String s) throws Exception {
+        if (s == null || s.equals("")) {
+            throw new Exception("String can't be empty!");
+        }
         length = s.length();
         offset = 0; // Так как находимся в начале этой строки
         count = length;
         m = new char[(int) Math.ceil(Math.sqrt(length))][(int) Math.ceil(Math.sqrt(length))]; // вычисляем размеры прямоугольника, куда положим наш текст
         int c = 0; // Счётчик символов. Если он больше длины строки, ничего более не записываем
+        copy:
         for (int i = 0; i < m.length; i++) {
-            if (c >= s.length()) // Обрываем, если дошли до конца
-                break;
             for (int j = 0; j < m[i].length; j++) {
                 if (c >= s.length()) // Обрываем, если дошли до конца
-                    break;
+                {
+                    break copy;
+                }
                 m[i][j] = s.charAt(c); // Записываем в наш чанк символ
                 c++;
             }
@@ -32,11 +35,11 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     }
 
     // Конструктор для создания новой строки на основе старой
-    private CustomString(char[][] m, int length, int offset, int count) {
+    private CharSequence(char[][] m, int offset, int count) {
         this.count = count;
         this.offset = offset;
         this.m = m;
-        this.length = length;
+        this.length = offset + count;
 
     }
 
@@ -53,27 +56,30 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     }
 
     // Получение новой строки на основе старой
-    public CustomString subCustomString(int start, int end) throws Exception {
+    public CharSequence subSequence(int start, int end) {
         if (start > end) // Смотрим, что левая граница меньше правой
-            throw new Exception("Left index can't be more than right index!");
+        {
+            System.out.println("Left index can't be more than right index!");
+            return null;
+        }
+
         if (end >= length) // Смотрим, что правая граница (итератор находится на последнем элементе) не вышла за длину строки
-            throw new Exception("The end index is too big!");
-        if (start < 0)
-            throw new Exception("Left index can't be less than 0!"); // Смотрим, что левая граница неотрицательна
+        {
+            System.out.println("The end index is too big!");
+            return null;
+        }
+        if (start < 0) {
+            System.out.println("Left index can't be less than 0!"); // Смотрим, что левая граница неотрицательна
+            return null;
+        }
         start += offset; // Учитываем начальные значения в чанке
         end += offset; // Учитываем начальные значения в чанке
         int length = end / (m[0].length) - start / (m[0].length) + 1; // Вычисляем количество чанков
         char[][] newM = new char[length][]; // Создаем подмассив чанков
         int st = start / m[0].length; // Создаём итератор, который будет перемещатся по чанкам (не по символам!)
         int tmp = st * m[0].length; // Вычисляем сколько символов останется позади нашего первого чанка
-        for (int i = 0; i < newM.length; i++) {
-            if (st > end / m[0].length) // Обрываем, если дошли до конца
-                break;
-            newM[i] = m[st];
-            st++;
-        }
-
-        return new CustomString(newM, length(), start - tmp, end - start + 1); // Возвращаем новый экземпляр нашей строки
+        System.arraycopy(m, st, newM, 0, end / m[0].length - st + 1); //Копируем чанки
+        return new CharSequence(newM, start - tmp, end - start + 1); // Возвращаем новый экземпляр нашей строки
 
     }
 
@@ -86,7 +92,9 @@ public class CustomString implements CharSequence, Serializable { // Импле�
             s.append(charAt(tmp)); // Вместо того, чтобы заного перебирать массив, использвуем готовую функцию
             tmp++;
             if (tmp >= count) // Обрываем, если дошли до конца
+            {
                 break;
+            }
 
         }
         return s.toString(); // Возвращаем строку
@@ -103,25 +111,4 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     public IntStream codePoints() {
         return null;
     }
-
-    //Useless
-    @Override
-    public CharSequence subSequence(int offset, int count) {
-       /* offset += offset;
-        int length = (offset + count) / (m[0].length) - offset / (m[0].length) + 1;
-        char[][] newM = new char[length][];
-        int st = offset / m[0].length;
-        int tmp = st * m[0].length;
-        for (int i = 0; i < newM.length; i++) {
-            if (st > (offset + count) / m[0].length)
-                break;
-            newM[i] = m[st];
-            st++;
-        }
-
-        return new CustomString(newM, length(), offset - tmp, count);
-*/
-        return null;
-    }
-
 }
