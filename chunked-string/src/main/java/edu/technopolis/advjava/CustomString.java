@@ -35,10 +35,6 @@ public class CustomString implements Serializable, Comparable<CustomString>, Cha
      * Отступ от конца последнего чанка.
      **/
     private final int backOffset;
-    /**
-     * Первый чанк, содержащий строку. (Может изменятся после при создании подстрок)
-     **/
-    private final int startChunk;
 
     /**
      * Конструктор для создания пустой строки
@@ -56,7 +52,6 @@ public class CustomString implements Serializable, Comparable<CustomString>, Cha
         frontOffset = 0;
         backOffset = 0;
         chunks = null;
-        startChunk = 0;
     }
 
 //    public CustomString(StringBuffer buffer){
@@ -83,7 +78,6 @@ public class CustomString implements Serializable, Comparable<CustomString>, Cha
         this.chunkSize = chunkSize;
         length = chars.length;
         frontOffset = 0;
-        startChunk = 0;
         if (chars.length == 0) {
             backOffset = 0;
             chunks = null;
@@ -113,13 +107,12 @@ public class CustomString implements Serializable, Comparable<CustomString>, Cha
     /**
      * Приватный конструктор, используемый при создании подстрок
      **/
-    private CustomString(char[][] chars, int frontOffset, int backOffset, int lenght, int chunkSize, int startChunk) {
+    private CustomString(char[][] chars, int frontOffset, int backOffset, int lenght, int chunkSize) {
         this.chunkSize = chunkSize;
         this.chunks = chars;
         this.frontOffset = frontOffset;
         this.backOffset = backOffset;
         this.length = lenght;
-        this.startChunk = startChunk;
     }
 
     /**
@@ -174,13 +167,19 @@ public class CustomString implements Serializable, Comparable<CustomString>, Cha
      **/
     private CustomString getSubString(int start, int end) {
         int startChunk = start / chunkSize;
+        int endChunk = (frontOffset + end) / chunkSize;
         int frontOffset = start % chunkSize;
         int backOffset = chunkSize - (end % chunkSize);
         if (backOffset == 8) {
             backOffset = 0;
         }
 
-        return new CustomString(chunks, frontOffset, backOffset, end - start, chunkSize, startChunk);
+        char[][] subChunks = new char[endChunk - startChunk + 1][chunkSize];
+        for (int i = startChunk; i <= endChunk; i++){
+            subChunks[i - startChunk] = chunks[i];
+        }
+
+        return new CustomString(subChunks, frontOffset, backOffset, end - start, chunkSize);
     }
 
     /**
@@ -190,7 +189,7 @@ public class CustomString implements Serializable, Comparable<CustomString>, Cha
     public String toString() {
         StringBuilder buff = new StringBuilder();
 
-        int chunkIndex = startChunk;
+        int chunkIndex = 0;
         int charIndex = frontOffset;
 
         for (int i = 0; i < length; i++) {
