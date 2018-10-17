@@ -3,7 +3,7 @@ package edu.technopolis;
 import java.io.Serializable;
 import java.util.stream.IntStream;
 
-public class CharSequence implements java.lang.CharSequence, Serializable { // Имплементим нужный нам интерфейс
+public class CustomString implements CharSequence, Serializable { // Имплементим нужный нам интерфейс
     private final int offset; // Начало строки
     private final int count; // Кол-во символов
 
@@ -11,7 +11,7 @@ public class CharSequence implements java.lang.CharSequence, Serializable { // �
     private final int length; // Длина всех чанков
 
     // Конструктор для создания новой строки
-    CharSequence(String s) throws Exception {
+    CustomString(String s) throws Exception {
         if (s == null || s.equals("")) {
             throw new Exception("String can't be empty!");
         }
@@ -35,7 +35,7 @@ public class CharSequence implements java.lang.CharSequence, Serializable { // �
     }
 
     // Конструктор для создания новой строки на основе старой
-    private CharSequence(char[][] m, int offset, int count) {
+    private CustomString(char[][] m, int offset, int count) {
         this.count = count;
         this.offset = offset;
         this.m = m;
@@ -79,7 +79,7 @@ public class CharSequence implements java.lang.CharSequence, Serializable { // �
         int st = start / m[0].length; // Создаём итератор, который будет перемещатся по чанкам (не по символам!)
         int tmp = st * m[0].length; // Вычисляем сколько символов останется позади нашего первого чанка
         System.arraycopy(m, st, newM, 0, end / m[0].length - st + 1); //Копируем чанки
-        return new CharSequence(newM, start - tmp, end - start + 1); // Возвращаем новый экземпляр нашей строки
+        return new CustomString(newM, start - tmp, end - start + 1); // Возвращаем новый экземпляр нашей строки
 
     }
 

@@ -16,7 +16,7 @@ public class Main {
         }
         //Вывод в качестве экземпляра всей книги "Война и Мир"
         BufferedWriter writer1 = new BufferedWriter(new FileWriter("out1.txt"));
-        CharSequence string1 = new CharSequence(s.toString());
+        CharSequence string1 = new CustomString(s.toString());
         writer1.write(string1.toString());
         writer1.close();
 
@@ -41,7 +41,7 @@ public class Main {
         writer4.close();
 
         //Работа с простым примером
-        CharSequence string5 = new CharSequence("Hello_world!");
+        CustomString string5 = new CustomString("Hello_world!");
         System.out.println(string5.toString());
 
         //Работа с простым примером #2
