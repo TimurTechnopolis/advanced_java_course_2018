@@ -1,9 +1,11 @@
 package edu.technopolis.advjava;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class SingleTest {
-    @org.junit.Test
+    @Test
     public void subSequencesTest() {
         CustomString str1 = new CustomString("012345678901234567890123456789");
         CustomString str2 = str1.subSequence(0, 20);
