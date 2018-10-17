@@ -1,0 +1,9 @@
+#Idea files
+.idea
+.gradle
+out
+*.iml
+!/.idea/inspectionProfiles/
+
+#Mac files
+*.DS_Store
