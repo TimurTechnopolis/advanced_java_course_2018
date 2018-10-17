@@ -1,7 +1,5 @@
 package edu.technopolis;
 
-import java.util.Arrays;
-
 public class CustomString implements CharSequence {
     char[][] chunks;
     int offset;
