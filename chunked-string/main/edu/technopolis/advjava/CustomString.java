@@ -46,13 +46,13 @@ public class CustomString implements CharSequence, Serializable {
     @Override
     public CustomString subSequence(int start, int end) throws IndexOutOfBoundsException{
         if (start < 0 || end > this.length) throw new ArrayIndexOutOfBoundsException();
-       return new CustomString(chunks, offset + start, offset + end);
+       return new CustomString(chunks, offset + start, end - start);
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (int i = offset; i < length; i++) {
+        for (int i = offset; i < offset + length; i++) {
             builder.append(chunks[i/chunkSize][i%chunkSize]);
         }
         return builder.toString();
