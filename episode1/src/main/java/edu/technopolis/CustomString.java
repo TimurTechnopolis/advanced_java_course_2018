@@ -43,7 +43,7 @@ public class CustomString implements CharSequence, Serializable { // Импле�
     // Получение длины строки
     @Override
     public int length() {
-        return length;
+        return this.length;
     }
 
     // Получение символа по индексу
