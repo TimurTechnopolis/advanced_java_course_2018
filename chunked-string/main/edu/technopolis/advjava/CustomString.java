@@ -50,7 +50,8 @@ public class CustomString implements CharSequence, Serializable {
     @Override
     public CustomString subSequence(int start, int end) throws IndexOutOfBoundsException{
         if (start < 0 || end > this.length) throw new ArrayIndexOutOfBoundsException();
-        char subChunks[][] = new char[(((end - start + 1) % chunkSize == 0) && ((end - start) != 0)) ? ((end - start) / chunkSize) : ((end - start) / chunkSize + 1)][chunkSize];
+        char subChunks[][] = new char[(((end - start + 1) % chunkSize == 0) && ((end - start) != 0))
+                ? ((end - start) / chunkSize) : ((end - start) / chunkSize + 1)][chunkSize];
         for (int i = 0, k = ((start + offset) / chunkSize); i < subChunks.length; i++, k++) {
             subChunks[i] = chunks[k];
         }
