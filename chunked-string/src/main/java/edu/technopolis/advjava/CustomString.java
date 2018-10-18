@@ -25,14 +25,6 @@ public class CustomString implements CharSequence, Serializable {
         for (int i = 0; i < length; i++) {
             this.chunks[i / lineLen][i % lineLen] = string.charAt(i);
         }
-        for (char[] ca :
-                chunks) {
-            for (char c :
-                    ca) {
-                System.out.print(c > 'a' ? c : '0');
-            }
-            System.out.println();
-        }
     }
 
     public CustomString(char[][] chunks, int offset, int length) {
