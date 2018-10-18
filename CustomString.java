@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /*
@@ -92,12 +93,13 @@ public class CustomString implements CharSequence {
         if ((end >= count) || (start < offset) || (start > end)) {
             throw new ArrayIndexOutOfBoundsException();
         }
-        int tmpLen = ((offset + end - start)/lengthChunk)-((offset + start) / lengthChunk);
-        char [][] copArray =  new char[tmpLen][];
-        for(int i = 0 ; i  < tmpLen; i++){
+        int tmpLen = ((offset + end)/lengthChunk)-((offset + start) / lengthChunk);
+        char [][] copArray =  new char[tmpLen+1][lengthChunk];
+        for(int i = 0 ; i  <= tmpLen; i++){
             copArray[i] = ch[(offset + start) / lengthChunk + i];
         }
-        return new CustomString(copArray, (offset + start)/lengthChunk, (offset + end - start + 1) / lengthChunk , lengthChunk);
+        //System.out.println(Arrays.deepToString(copArray) + " 00 ");
+        return new CustomString(copArray, (offset + start)%lengthChunk, offset + end - start + 1, lengthChunk);
     }
 
     public String toString() {
