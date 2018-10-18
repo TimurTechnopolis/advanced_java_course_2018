@@ -1,10 +1,29 @@
 import java.util.stream.IntStream;
 
+/*
+Данная реализация String подходит для строк любой длинны,
+но при условии что нам ничего не известно про начальную строку
+и ничего не известно про subString которые мы извлекаем оттуда.
+Так как моя строка разбивается на чанки одинаковой длины,где длина это наибольший
+делитель числа, больший чем корень из числа, то у меня не использовааной остаётся максимум одна
+ячейка (в случае если число простое). При условии, что мы знаем что то про начальную строку
+и подстроки еоторые будем извлекать, можно придумать более оптимальный алгоритм (например в чанке
+хранить почти подстроки так, чтобы применяя функцию substring мы всё время захватывали чанк полностью.
+Так например можно хранить книги по страницам, если мы будем точно знать что пользователь всегда будет
+запрашивать целое число страниц), но в общем случае, когда про строку ничего не известно,
+мой алгорит разбиения на чанки довольно оптимальный.
+ */
+
 public class CustomString implements CharSequence {
     private char[][] ch;
     private int offset;
     private int count;
     private int lengthChunk = 0;
+
+    //Нахожу максимальный делитель, меньший корня из длины строки,
+    //если число простое, то нахожу делитель из следующего числа
+    //Так как два соседних числа не могут быть простыми
+    //кроме 2 и 3, то хотя бы одно из чисел будет иметь нужный нам делитель
 
     private int isPrimeNumbers (int i) {
         int j = (int)Math.sqrt(i);
@@ -22,6 +41,8 @@ public class CustomString implements CharSequence {
         this.count = count;
         this.lengthChunk = lengthChunk;
     }
+
+    //Начальный конструктор
 
     public CustomString(String value) {
         offset = 0;
@@ -55,7 +76,7 @@ public class CustomString implements CharSequence {
     @Override
     public char charAt(int index) {
         if ((offset + index >= count) || (offset + index < count)) {
-            throw new NullPointerException();
+            throw new ArrayIndexOutOfBoundsException();
         }
         int chunk = (offset + index) / lengthChunk;
         int in = (offset + index) % lengthChunk;
@@ -69,14 +90,14 @@ public class CustomString implements CharSequence {
 
     public CustomString subString(int start, int end) {
         if ((end >= count) || (start < offset) || (start > end)) {
-            throw new NullPointerException();
+            throw new ArrayIndexOutOfBoundsException();
         }
         int tmpLen = ((offset + end - start)/lengthChunk)-((offset + start) / lengthChunk);
         char [][] copArray =  new char[tmpLen][];
         for(int i = 0 ; i  < tmpLen; i++){
             copArray[i] = ch[(offset + start) / lengthChunk + i];
         }
-        return new CustomString(copArray, offset + start, offset + end - start + 1, lengthChunk);
+        return new CustomString(copArray, (offset + start)/lengthChunk, (offset + end - start + 1) / lengthChunk , lengthChunk);
     }
 
     public String toString() {
