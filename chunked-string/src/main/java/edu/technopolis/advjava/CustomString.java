@@ -15,8 +15,6 @@ public class CustomString implements CharSequence, Serializable {
     private int offset;
     private int chunkSize;
     private int chunkAmount;
-    //private int defaultChunk = 80;
-    //private final int DEFAULT_CHUNK_SIZE = 80;
 
 
     public CustomString(String value, int chSize) {
@@ -59,8 +57,6 @@ public class CustomString implements CharSequence, Serializable {
 
     }
 
-
-
     public CustomString(String value){
         this(value, 4);
     }
@@ -91,7 +87,8 @@ public class CustomString implements CharSequence, Serializable {
     @Override
     public String toString() {
         StringBuilder build = new StringBuilder(this.size);
-        for (int i = this.offset; i < this.size+this.offset; i++) {
+
+        for (int i = 0; i < this.size; i++) {
             build.append(chunks[i/chunkSize][i%chunkSize]);
         }
         return new String(build);
@@ -101,22 +98,23 @@ public class CustomString implements CharSequence, Serializable {
         for (int i = 0; i < this.chunkAmount; i++)
             for(int k = 0; k < this.chunkSize; k++)
             {
-                if(i*chunkSize + k - (offset -1) < size)
+                if(i*chunkSize + k < this.size)
                 System.out.print(chunks[i][k]);
+                else break;
             }
         System.out.println();
     }
 
     public static void main(String[] args) {
-        String s = "Привет. Ок.";
+        String s = "Hello, my dear friend.";
         CustomString test = new CustomString(s);
         System.out.println(test.length());
-        System.out.println("s value:");
         CustomString test2 = (CustomString) test.subSequence(3, 5);
         test2.print();
-        System.out.println("to string " + test2.toString());
-        for (int i = 0; i <= test2.length(); i++)
+        for (int i = 0; i < test2.length(); i++)
         System.out.println(i + " " + test2.charAt(i));
+        System.out.println("test custom length");
         System.out.println(test2.length());
+        System.out.println(test2.toString());
     }
 }
