@@ -9,8 +9,10 @@ import java.io.Serializable;
  */
 public class CustomString implements CharSequence, Serializable {
 
+    //If string length < MIN_CHUNK_SIZE then there is only 1 chunk
+    private final int MIN_CHUNK_SIZE = 512;
     //Max number of characters in one chunk
-    private final int MAX_CHUNK_SIZE = 512;
+    private final int MAX_CHUNK_SIZE = 1024;
     //Max amount of chunks for copying, otherwise use offset
     private final int MAX_CHUNKS_FOR_COPY = 32;
 
@@ -40,12 +42,13 @@ public class CustomString implements CharSequence, Serializable {
             return;
         }
 
-        //If sqrt(length) < MAX_CHUNK_SIZE, use chunks[sqrt(length)][sqrt(length)]
+        //If MIN_CHUNK_SIZE < sqrt(length) < MAX_CHUNK_SIZE, use chunks[sqrt(length)][sqrt(length)]
         //Else -- use chunks[chunkAmount][MAX_CHUNK_SIZE]
-        int sqrStringLength = getSqrtLength(length);
         characterAmount = length;
+        int sqrStringLength = getSqrtLength(length);
         chooseChunkSize(sqrStringLength);
         chooseChunkAmount();
+        checkMin();
         chunks = new char[chunkAmount][chunkSize];
 
         for (int i = 0; i < str.length(); i++) {
@@ -66,6 +69,7 @@ public class CustomString implements CharSequence, Serializable {
         int sqrStringLength = getSqrtLength(length);
         chooseChunkSize(sqrStringLength);
         chooseChunkAmount();
+        checkMin();
         chunks = new char[chunkAmount][chunkSize];
 
         for (int i = 0; i < length; i++) {
@@ -91,6 +95,7 @@ public class CustomString implements CharSequence, Serializable {
         length = nLength;
         chunkSize = sqrStringLength;
         chooseChunkAmount();
+        checkMin();
         characterAmount = oneChunk.length;
         chunks = new char[chunkAmount][chunkSize];
 
@@ -125,6 +130,13 @@ public class CustomString implements CharSequence, Serializable {
             chunkAmount = length / chunkSize;
         } else {
             chunkAmount = length / chunkSize + 1;
+        }
+    }
+
+    private void checkMin() {
+        if (length < MIN_CHUNK_SIZE) {
+            chunkAmount = 1;
+            chunkSize = length;
         }
     }
 
