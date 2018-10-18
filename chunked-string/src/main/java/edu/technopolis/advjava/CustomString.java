@@ -1,12 +1,11 @@
-package edu.technopolis.advjava;
-
 import java.io.Serializable;
 import java.util.*;
 import java.io.*;
+import java.util.Arrays;
 
 /**
  * Реализованная специальным образом строка (аналог {@link java.lang.String}),
- * хранящий содержимое строки кусочкам (chunks) для лучшего переиспользования памяти при активном
+ * хранящая содержимое строки кусочкам (chunks) для лучшего переиспользования памяти при активном
  * создании подстрок.
  */
 public class CustomString implements CharSequence, Serializable {
@@ -16,6 +15,8 @@ public class CustomString implements CharSequence, Serializable {
      */
     private final int offset;
     private final int count;
+
+    private final int CHUNK_SIZE;
 
     /*
      * Group of constructors has been added
@@ -28,10 +29,31 @@ public class CustomString implements CharSequence, Serializable {
         this(chunks, 0, count);
     }
 
-    public CustomString(char[][] chunks, int offset, int count) {
+    private CustomString(char[][] chunks, int offset, int count) {
         this.chunks = chunks;
         this.offset = offset;
         this.count = count;
+        CHUNK_SIZE = 8;
+    }
+
+    private CustomString(char[] input) {
+        CHUNK_SIZE = 8;
+        this.offset = 0;
+        this.count = input.length;
+        int amount;
+        if (count % CHUNK_SIZE == 0) {
+            amount = count / CHUNK_SIZE;
+        }
+        else {
+            amount = count / CHUNK_SIZE+1;
+        }
+        chunks = new char[amount][CHUNK_SIZE];
+        for (int i = 0, l = 0; i < amount; i++) {
+            for (int j=0; (j < CHUNK_SIZE) && (l < count); j++) {
+                chunks[i][j] = input[l];
+                l++;
+            }
+        }
     }
 
     @Override
@@ -42,29 +64,60 @@ public class CustomString implements CharSequence, Serializable {
     @Override
     public char charAt(int index) {
         if (index < 0 || index >= count) {
-            throw IndexOutOfBoundsException("Out of bounds!");
+            throw new IndexOutOfBoundsException("Out of bounds!");
         }
-        return chunks[offset + index];
+        int new_index = offset + index;
+        int row = new_index / CHUNK_SIZE;
+        int column = new_index % CHUNK_SIZE;
+        return chunks[row][column];
     }
 
     @Override
-    public CharSequence subSequence(int start, int end) {
-        if (start < 0 || end < 0) || end > length() || start > end) {
-            throw IndexOutOfBoundsException("Out of bounds!");
+    public CustomString subSequence(int start, int end) {
+        if (start < 0 || end < 0 || end > length() || start > end) {
+            throw new IndexOutOfBoundsException("Out of bounds!");
         }
         if ((start == 0) && (end == length())) {
             return this;
         }
         else {
             int low_bound = offset + start;
-            int up_bound = end - start;
-            return CustomString(chunks, low_bound, up_bound);
+            int up_bound = end + offset;
+            char [][]chunkies;
+            int count = up_bound-low_bound+1;
+            int amount = up_bound/CHUNK_SIZE - low_bound/CHUNK_SIZE + 1;
+            int offset = low_bound % CHUNK_SIZE;
+            int first_chunk = low_bound / CHUNK_SIZE;
+            chunkies = new char [amount][count];
+            for (int i=0; i<amount; i++) {
+                for (int j=0; j<count; j++) {
+                    chunkies[i] = chunks[first_chunk];
+                }
+//                System.out.println(chunkies[i]);
+                first_chunk++;
+            }
+            return new CustomString(chunkies, offset, amount);
         }
-//        return toString().subSequence(start, end);
     }
 
     @Override
     public String toString() {
-        return new String(this.chunks, this.offset, this.count);
+        char[] output = new char[count];
+        int row, column;
+        for (int i = 0; i < count; i++) {
+            row = (i + offset) / CHUNK_SIZE;
+            column = (i + offset) % CHUNK_SIZE;
+            output[i] = chunks[row][column];
+        }
+        return new String(output);
+    }
+
+    public static void main(String[] args) {
+        String input = "abcdefghijklmnopqrstuvwxyz";
+        CustomString full_str = new CustomString(input.toCharArray());
+        System.out.println(full_str.charAt(4));
+        System.out.println(full_str.length());
+        CustomString full_str_seq = full_str.subSequence(6, 10);
+        System.out.println(full_str_seq);
     }
 }
