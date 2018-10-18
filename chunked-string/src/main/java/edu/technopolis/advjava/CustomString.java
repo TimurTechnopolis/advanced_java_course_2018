@@ -2,42 +2,91 @@ package edu.technopolis.advjava;
 
 import java.io.Serializable;
 
-/**
- * Реализованная специальным образом строка (аналог {@link java.lang.String}),
- * хранящий содержимое строки кусочкам (chunks) для лучшего переиспользования памяти при активном
- * создании подстрок.
- */
+
 public class CustomString implements CharSequence, Serializable {
+
+    int chunkSize;
     private final char[][] chunks;
 
-    /*
-     * todo add complimentary fields if required
-     */
+    int length;
+    int offset;
+    int count;
 
-
-    /*
-     * todo add constructor or group of constructors
-     */
-
+    public CustomString(){
+        length = 0;
+        offset = 0;
+        count = 0;
+        chunkSize = 0;
+        chunks = new char[chunkSize][chunkSize];
+    }
+    public CustomString(String str) {
+        if (str.length() >= 0){
+            this.length = str.length();
+            this.chunkSize =(int)Math.sqrt(this.length) + 1;
+            this.chunks = new char[chunkSize][chunkSize];
+            int k = 0;
+            for (int i = 0; i < chunkSize; i++){
+                for (int j = 0; j < chunkSize; j++) {
+                    if (k < length) {
+                        chunks[i][j] = str.charAt(k);
+                        k++;
+                    }
+                }
+            }
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+    public CustomString(int offset, int count, char[][] chunks){
+        this.chunks = chunks;
+        this.chunkSize = chunks.length;
+        this.length = count;
+        this.offset = offset;
+        this.count = count;
+    }
 
     @Override
     public int length() {
-        //todo implement length here
+        return this.length;
     }
 
     @Override
     public char charAt(int index) {
-        //todo implement charAt here
+        if (index >= 0 && index <= length - 1) {
+            return chunks[index/chunkSize][index%chunkSize];
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        //todo implement subSequence here
+        if (start >= 0 && end <= this.length - 1 && end >= start){
+            return new CustomString(start + offset, end - start + 1, chunks);
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     @Override
     public String toString() {
-        //todo fold chunks into single char array
-        return new String(/* place folded char array here */);
+        StringBuilder s = new StringBuilder();
+        for(int i = offset; i < offset + length; i++){
+            s.append(this.chunks[i/chunkSize][i%chunkSize]);
+        }
+        return s.toString();
+    }
+
+
+    public static void main(String[] args) {
+        CustomString s = new CustomString("qwerty");
+
+        String ss = s.toString();
+        System.out.println(ss);
+        char c = s.charAt(5);
+        System.out.println(c);
+        String q = s.subSequence(1,3).toString();
+        System.out.println(q);
+
     }
 }
