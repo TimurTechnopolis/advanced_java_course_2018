@@ -1,7 +1,5 @@
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import javax.security.auth.login.AccountExpiredException;
 
 /*
 Данная реализация String подходит для строк любой длинны,
@@ -100,7 +98,7 @@ public class CustomString implements CharSequence {
         for(int i = 0 ; i  <= tmpLen; i++){
             copArray[i] = ch[(offset + start) / lengthChunk + i];
         }
-        System.out.println(Arrays.deepToString(copArray) + " 00 ");
+        //System.out.println(Arrays.deepToString(copArray) + " 00 ");
         return new CustomString(copArray, (offset + start)%lengthChunk, offset + end - start + 1, lengthChunk);
     }
 
