@@ -1,6 +1,8 @@
 package main.java.edu.technopolis;
 
-public class CustomString implements CharSequence {
+import java.io.Serializable;
+
+public class CustomString implements Serializable, CharSequence {
 
     private char[][] chunks;
     private final int chunkLength;
