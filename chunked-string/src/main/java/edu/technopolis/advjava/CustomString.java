@@ -7,37 +7,62 @@ import java.io.Serializable;
  * хранящий содержимое строки кусочкам (chunks) для лучшего переиспользования памяти при активном
  * создании подстрок.
  */
+
 public class CustomString implements CharSequence, Serializable {
-    private final char[][] chunks;
 
-    /*
-     * todo add complimentary fields if required
-     */
+    private char[][] chunks;
 
+    private static final int CHUNK_SIZE = 512;
 
-    /*
-     * todo add constructor or group of constructors
-     */
+    private final int size;
 
+    private final int offset;
+
+    public CustomString(String s) {
+        size = s.length();
+        offset = 0;
+        chunks = new char[(size / CHUNK_SIZE) + 1][];
+        for (int i = 0; i < chunks.length; i++) {
+            chunks[i] = new char[CHUNK_SIZE];
+        }
+        for (int i = 0; i < size; i++) {
+            chunks[i / CHUNK_SIZE][i % CHUNK_SIZE] = s.charAt(i);
+        }
+    }
+
+    private CustomString(char[][] arr, int offset, int length) {
+        this.size = length;
+        int startingChunk = offset / CHUNK_SIZE;
+        this.offset = offset % CHUNK_SIZE;
+        int endingChunk = (offset + length) / CHUNK_SIZE;
+        this.chunks = new char[endingChunk - startingChunk + 1][];
+        for (int i = 0; i < chunks.length; i++) {
+            chunks[i] = arr[startingChunk + i];
+        }
+
+    }
 
     @Override
     public int length() {
-        //todo implement length here
+        return size;
     }
 
     @Override
     public char charAt(int index) {
-        //todo implement charAt here
+        return chunks[offset + index / CHUNK_SIZE][offset + index % CHUNK_SIZE];
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        //todo implement subSequence here
+        return new CustomString(this.chunks, start, end - start);
     }
 
     @Override
     public String toString() {
-        //todo fold chunks into single char array
-        return new String(/* place folded char array here */);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = offset; i < size; i++) {
+            stringBuilder.append(chunks[i / CHUNK_SIZE][i % CHUNK_SIZE]);
+        }
+        return stringBuilder.toString();
     }
 }
