@@ -58,3 +58,65 @@ public class CustomString implements CharSequence, Serializable {
             }
 
     }
+
+
+
+    public CustomString(String value){
+        this(value, 4);
+    }
+
+    @Override
+    public int length() {
+        return this.size;
+    }
+
+    @Override
+    public char charAt(int index) {
+        if (index < size && index >= 0)
+            return chunks[index/chunkSize][index % chunkSize];
+        else
+            throw new IndexOutOfBoundsException("Invalid Index");
+        //todo implement charAt here
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int length) {
+        if (start < 0 || length > this.size){
+            throw new InvalidParameterException("Invalid Index Parameters");
+        }
+        return new CustomString(this.chunks, this.chunkSize , start, length);
+        //todo implement subSequence here
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder build = new StringBuilder(this.size);
+        for (int i = this.offset; i < this.size+this.offset; i++) {
+            build.append(chunks[i/chunkSize][i%chunkSize]);
+        }
+        return new String(build);
+    }
+
+    public void print(){
+        for (int i = 0; i < this.chunkAmount; i++)
+            for(int k = 0; k < this.chunkSize; k++)
+            {
+                if(i*chunkSize + k - (offset -1) < size)
+                System.out.print(chunks[i][k]);
+            }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        String s = "Привет. Ок.";
+        CustomString test = new CustomString(s);
+        System.out.println(test.length());
+        System.out.println("s value:");
+        CustomString test2 = (CustomString) test.subSequence(3, 5);
+        test2.print();
+        System.out.println("to string " + test2.toString());
+        for (int i = 0; i <= test2.length(); i++)
+        System.out.println(i + " " + test2.charAt(i));
+        System.out.println(test2.length());
+    }
+}
