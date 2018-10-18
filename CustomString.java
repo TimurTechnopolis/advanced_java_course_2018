@@ -1,6 +1,8 @@
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import javax.security.auth.login.AccountExpiredException;
+
 /*
 Данная реализация String подходит для строк любой длинны,
 но при условии что нам ничего не известно про начальную строку
@@ -29,7 +31,7 @@ public class CustomString implements CharSequence {
     private int isPrimeNumbers (int i) {
         int j = (int)Math.sqrt(i);
         for (; j > 0; j--) {
-            if (i/j == 0) {
+            if ((i%j) == 0) {
                 return j;
             }
         }
@@ -53,7 +55,7 @@ public class CustomString implements CharSequence {
 
         } else {
             int tmp = isPrimeNumbers(count);
-            if (tmp == 1) {
+            if (tmp != 1) {
                 lengthChunk = tmp;
             } else {
                 lengthChunk = isPrimeNumbers(count + 1);
@@ -98,14 +100,14 @@ public class CustomString implements CharSequence {
         for(int i = 0 ; i  <= tmpLen; i++){
             copArray[i] = ch[(offset + start) / lengthChunk + i];
         }
-        //System.out.println(Arrays.deepToString(copArray) + " 00 ");
+        System.out.println(Arrays.deepToString(copArray) + " 00 ");
         return new CustomString(copArray, (offset + start)%lengthChunk, offset + end - start + 1, lengthChunk);
     }
 
     public String toString() {
         StringBuffer res = new StringBuffer();
         //int amountChunk = count/ lengthChunk;
-        int i = offset / lengthChunk;
+        int i = 0;
         for (int j = offset % lengthChunk; j < count; j++) {
             if (j == lengthChunk) {
                 i++;
