@@ -153,7 +153,7 @@ public class CustomString implements CharSequence, Serializable {
     }
 
     @Override
-    public CharSequence subSequence(int start, int end) {
+    public CustomString subSequence(int start, int end) {
         if (start >= 0 && start <= end && end <= characterAmount) {
             if (start == end) {
                 return new CustomString();

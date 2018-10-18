@@ -6,36 +6,6 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void warAndPieceTests() {
-        CustomString s = new CustomString();
-
-        try (FileReader reader = new FileReader("war_and_peace/lt1.txt")) {
-
-            Scanner sc = new Scanner(reader);
-
-            StringBuilder builder = new StringBuilder();
-            while (sc.hasNext()) {
-                builder.append(sc.nextLine() + "\n");
-            }
-
-            s = new CustomString(builder.toString());
-
-        } catch (IOException e) {
-
-        }
-
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 10; i++) {
-            System.out.println(s.subSequence(i * 50000, (i + 1) * 50000));
-        }
-        System.out.println(s.subSequence(50000, 100000));
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println("Subsequences: " + elapsedTime);
-
-    }
-
     public static void customStringTests() {
         CustomString sEmpty = new CustomString();
         System.out.println("Empty: " + sEmpty);
@@ -104,12 +74,40 @@ public class Main {
         System.out.println("Custom string subsequences: " + elapsedTime);
     }
 
+    public static void anotherTest() {
+
+        StringBuilder strBuilder = new StringBuilder();
+        for (int i = 0; i < 2000000; i++) {
+            strBuilder.append("MOYA OBORONA");
+        }
+
+        String s = strBuilder.toString();
+        CustomString cs = new CustomString(strBuilder.toString());
+
+        long startStrTime = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            s = s.substring(i * 10, s.length() - i * 10);
+        }
+        long endStrTime = System.currentTimeMillis();
+
+        long startCSTime = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            cs = cs.subSequence(i * 10, cs.length() - i * 10);
+            System.out.println(cs.length());
+        }
+        long endCSTime = System.currentTimeMillis();
+
+        System.out.println("Str: " + (endStrTime - startStrTime));
+        System.out.println("CStr: " + (endCSTime - startCSTime));
+
+    }
+
     public static void main(String[] args) {
 
-        //warAndPieceTests();
         //customStringTests();
         //speedLargeTests();
         //speedSmallTests();
+        anotherTest();
 
     }
 }
