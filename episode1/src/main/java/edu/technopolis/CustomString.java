@@ -36,7 +36,7 @@ public class CustomString implements CharSequence, Serializable { // Импле�
         this.count = count;
         this.offset = offset;
         this.m = m;
-        this.length = offset + count;
+        this.length = count;
 
     }
 

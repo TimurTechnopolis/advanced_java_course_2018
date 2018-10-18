@@ -38,18 +38,14 @@ public class Main {
         CharSequence string4 = string2.subSequence(208784, 221711);
         writer4.write(string4.toString());
         writer4.close();
-
         //Работа с простым примером
         CustomString string5 = new CustomString("Hello_world!");
         System.out.println(string5.toString());
-
         //Работа с простым примером #2
         CharSequence string6 = string5.subSequence(5, 8);
         System.out.println(string6.toString());
-
         //Работа с простым примером #3
         CharSequence string7 = string6.subSequence(1, 2);
         System.out.println(string7.toString());
-
     }
 }
