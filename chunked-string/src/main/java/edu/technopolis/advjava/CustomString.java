@@ -93,26 +93,25 @@ public class CustomString implements CharSequence, Serializable {
                 for (int j=0; j<count; j++) {
                     chunkies[i] = chunks[first_chunk];
                 }
-//                System.out.println(chunkies[i]);
                 first_chunk++;
             }
-            return new CustomString(chunkies, offset, amount);
+            return new CustomString(chunkies, offset, end-start+1);
         }
     }
 
     @Override
     public String toString() {
-        char[] output = new char[count];
-        int row, column;
-        for (int i = 0; i < count; i++) {
-            row = (i + offset) / CHUNK_SIZE;
-            column = (i + offset) % CHUNK_SIZE;
-            output[i] = chunks[row][column];
+        StringBuilder result = new StringBuilder();
+        int count = 0;
+        while (count < length()){
+            result.append(charAt(count));
+            count++;
         }
-        return new String(output);
+        return result.toString();
     }
 
     public static void main(String[] args) {
+	//example of usage
         String input = "abcdefghijklmnopqrstuvwxyz";
         CustomString full_str = new CustomString(input.toCharArray());
         System.out.println(full_str.charAt(4));
