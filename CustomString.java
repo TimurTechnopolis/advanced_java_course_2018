@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 
@@ -89,6 +90,12 @@ public class CustomString implements CharSequence {
         return null;
     }
 
+    /*Принимет индексы начала и конца строки (start, end)
+    * Возвращает подстроку начинающуюся с start и
+    * кончающуюся end (включительно)
+    * Возвращает указатели на чанки, содержащую данную подстроку
+    */
+
     public CustomString subString(int start, int end) {
         if ((end >= count) || (start < offset) || (start > end)) {
             throw new ArrayIndexOutOfBoundsException();
@@ -98,20 +105,21 @@ public class CustomString implements CharSequence {
         for(int i = 0 ; i  <= tmpLen; i++){
             copArray[i] = ch[(offset + start) / lengthChunk + i];
         }
-        //System.out.println(Arrays.deepToString(copArray) + " 00 ");
-        return new CustomString(copArray, (offset + start)%lengthChunk, offset + end - start + 1, lengthChunk);
+        return new CustomString(copArray, (offset + start)%lengthChunk, end - start + 1, lengthChunk);
     }
+
+    /*
+        Приводит массив символов к строке
+     */
 
     public String toString() {
         StringBuffer res = new StringBuffer();
-        //int amountChunk = count/ lengthChunk;
         int i = 0;
-        for (int j = offset % lengthChunk; j < count; j++) {
-            if (j == lengthChunk) {
-                i++;
+        for (int j = offset % lengthChunk; j < count + offset % lengthChunk; j++) {
+            if (((j%lengthChunk == 0)&&(j!=0))) {
+                i+= 1;
             }
             res.append(ch[i][j % lengthChunk]);
-
         }
         return res.toString();
     }
