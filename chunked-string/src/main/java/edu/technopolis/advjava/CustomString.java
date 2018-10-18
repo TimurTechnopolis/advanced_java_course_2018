@@ -75,6 +75,9 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public CharSequence subSequence(int start, int end) {
+        if(start<offset||end>=count){
+            throw new ArrayIndexOutOfBoundsException();
+        }
         int chunkNumberStart=start/this.lengthChunk;
         int chunkNumberEnd=end%this.lengthChunk==0 ? end/this.lengthChunk: end/this.lengthChunk + 1;
         char[][] subValues = new char[chunkNumberEnd-chunkNumberStart][];
