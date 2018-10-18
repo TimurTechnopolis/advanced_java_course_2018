@@ -186,7 +186,7 @@ public class CustomString implements CharSequence, Serializable {
     public String toString() {
         StringBuilder strBuilder = new StringBuilder();
 
-        for (int i = offset; i < offset + length; i++) {
+        for (int i = 0; i < length; i++) {
             strBuilder.append(charAt(i));
         }
 
