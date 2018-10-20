@@ -32,42 +32,6 @@ public class CustomString implements CharSequence, Serializable {
         this("");
     }
 
-    public void setMaxChunkSize(int maxChunkSize) {
-        this.maxChunkSize = maxChunkSize;
-    }
-
-    //Additional functions
-    private int getSqrtLength(int l) {
-        return (int) Math.ceil(Math.sqrt(l));
-    }
-
-    private void setChunkParameters(int strLength) {
-        if (strLength <= maxChunkSize) {
-            chunkSize = strLength;
-            chunkAmount = 1;
-        } else {
-            if (strLength / (128 * maxChunkSize) > 1) {
-                chunkSize = getSqrtLength(strLength) * 2;
-            } else {
-                chunkSize = maxChunkSize;
-            }
-            chooseChunkAmount(strLength);
-        }
-        chooseLengthForCopy();
-    }
-
-    private void chooseLengthForCopy() {
-        lengthForCopy = characterAmount * 3 / 4;
-    }
-
-    private void chooseChunkAmount(int strLength) {
-        if (strLength % chunkSize == 0) {
-            chunkAmount = strLength / chunkSize;
-        } else {
-            chunkAmount = strLength / chunkSize + 1;
-        }
-    }
-
     public CustomString(CharSequence chars) {
         length = chars.length();
         characterAmount = length;
@@ -102,6 +66,38 @@ public class CustomString implements CharSequence, Serializable {
             for (int i = offset; i < offset + length; i++) {
                 chunks[i / chunkSize][i % chunkSize] = oneChunk[offset + i];
             }
+        }
+    }
+
+    //Additional functions
+    private int getSqrtLength(int l) {
+        return (int) Math.ceil(Math.sqrt(l));
+    }
+
+    private void setChunkParameters(int strLength) {
+        if (strLength <= maxChunkSize) {
+            chunkSize = strLength;
+            chunkAmount = 1;
+        } else {
+            if (strLength / (128 * maxChunkSize) > 1) {
+                chunkSize = getSqrtLength(strLength) * 2;
+            } else {
+                chunkSize = maxChunkSize;
+            }
+            chooseChunkAmount(strLength);
+        }
+        chooseLengthForCopy();
+    }
+
+    private void chooseLengthForCopy() {
+        lengthForCopy = characterAmount * 3 / 4;
+    }
+
+    private void chooseChunkAmount(int strLength) {
+        if (strLength % chunkSize == 0) {
+            chunkAmount = strLength / chunkSize;
+        } else {
+            chunkAmount = strLength / chunkSize + 1;
         }
     }
 
