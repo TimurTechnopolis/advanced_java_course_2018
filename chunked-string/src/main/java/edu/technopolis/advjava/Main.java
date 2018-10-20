@@ -26,7 +26,7 @@ public class Main {
 
     public static void speedLargeTests() {
         StringBuilder strBuilder = new StringBuilder();
-        for (int i = 0; i < 10e6; i++) {
+        for (int i = 0; i < 1000000; i++) {
             strBuilder.append("A");
         }
 
@@ -42,7 +42,7 @@ public class Main {
         CustomString str = new CustomString(strBuilder.toString());
         startTime = System.currentTimeMillis();
         for (int i = 0; i < 1000; i++) {
-            CharSequence s2 = (str.subSequence(i * 10, 1000000 - 1 - i * 10));
+            CustomString cs = str.subSequence(i * 10, 1000000 - 1 - i * 10);
         }
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
@@ -51,7 +51,7 @@ public class Main {
 
     public static void speedSmallTests() {
         StringBuilder strBuilder = new StringBuilder();
-        for (int i = 0; i < 10e6; i++) {
+        for (int i = 0; i < 1000000; i++) {
             strBuilder.append("A");
         }
 
@@ -104,9 +104,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //customStringTests();
-        //speedLargeTests();
-        //speedSmallTests();
+        customStringTests();
+        speedLargeTests();
+        speedSmallTests();
         anotherTest();
 
     }

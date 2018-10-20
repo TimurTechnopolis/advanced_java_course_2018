@@ -22,8 +22,8 @@ public class CustomString implements CharSequence, Serializable {
     private int chunkAmount;
     //Size of one chunk
     private int chunkSize;
-    //Min amount for chunks to make a new CustomString (in subSequence)
-    private int minCopyChunkAmount;
+    //if length becomes less than lengthForCopy, make a new copy of string instead of changing offset
+    private int lengthForCopy;
     //Max number of characters in one chunk
     private int maxChunkSize = 1024;
 
@@ -52,12 +52,12 @@ public class CustomString implements CharSequence, Serializable {
                 chunkSize = maxChunkSize;
             }
             chooseChunkAmount(strLength);
-            chooseMinCopyChunkAmount();
         }
+        chooseLengthForCopy();
     }
 
-    private void chooseMinCopyChunkAmount() {
-        minCopyChunkAmount = chunkAmount / 4 * 3;
+    private void chooseLengthForCopy() {
+        lengthForCopy = characterAmount * 3 / 4;
     }
 
     private void chooseChunkAmount(int strLength) {
@@ -70,7 +70,6 @@ public class CustomString implements CharSequence, Serializable {
 
     public CustomString(CharSequence chars) {
         length = chars.length();
-
         characterAmount = length;
         setChunkParameters(length);
         chunks = new char[chunkAmount][chunkSize];
@@ -86,23 +85,23 @@ public class CustomString implements CharSequence, Serializable {
         offset = nOffset;
         chunkAmount = chunksArray.length;
         chunkSize = chunksArray[0].length;
-        characterAmount = length;
         characterAmount = chunkAmount * chunkSize;
-        chooseMinCopyChunkAmount();
+        chooseLengthForCopy();
     }
 
     private CustomString(char[] oneChunk, int nOffset, int nLength) {
-        int sqrStringLength = getSqrtLength(nLength);
-
         offset = nOffset;
         length = nLength;
-        chunkSize = sqrStringLength;
-        chooseChunkAmount(length);
         characterAmount = oneChunk.length;
+        setChunkParameters(length);
         chunks = new char[chunkAmount][chunkSize];
 
-        for (int i = offset; i < offset + length; i++) {
-            chunks[i / chunkSize][i % chunkSize] = oneChunk[offset + i];
+        if (chunkAmount == 1) {
+            System.arraycopy(oneChunk, 0, chunks[0], 0, nLength);
+        } else {
+            for (int i = offset; i < offset + length; i++) {
+                chunks[i / chunkSize][i % chunkSize] = oneChunk[offset + i];
+            }
         }
     }
 
@@ -138,7 +137,7 @@ public class CustomString implements CharSequence, Serializable {
                 System.arraycopy(chunks[firstChunkNumber], offset, newChunk, 0, end - start);
                 return new CustomString(newChunk, newOffset, newLength);
 
-            } else if (firstChunkNumber + minCopyChunkAmount < lastChunkNumber) {
+            } else if (newLength < lengthForCopy) {
 
                 int copyChunksAmount = lastChunkNumber - firstChunkNumber + 1;
                 char newChunks[][] = new char[copyChunksAmount][chunkSize];
@@ -149,7 +148,7 @@ public class CustomString implements CharSequence, Serializable {
                 return new CustomString(newChunks, newOffset, newLength);
             } else {
                 offset = start;
-                length = end - start + 1;
+                length = end - start;
 
                 return this;
             }
