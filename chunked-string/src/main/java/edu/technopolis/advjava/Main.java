@@ -67,7 +67,7 @@ public class Main {
         CustomString str = new CustomString(strBuilder.toString());
         startTime = System.currentTimeMillis();
         for (int i = 0; i < 500; i++) {
-            CharSequence s2 = str.subSequence(i * 1000, 1000000 - 1 - i * 1000);
+            CustomString s2 = str.subSequence(i * 1000, 1000000 - 1 - i * 1000);
         }
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
@@ -77,7 +77,7 @@ public class Main {
     public static void anotherTest() {
 
         StringBuilder strBuilder = new StringBuilder();
-        for (int i = 0; i < 2000000; i++) {
+        for (int i = 0; i < 500000; i++) {
             strBuilder.append("MOYA OBORONA");
         }
 
@@ -85,15 +85,15 @@ public class Main {
         CustomString cs = new CustomString(strBuilder.toString());
 
         long startStrTime = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            s = s.substring(i * 10, s.length() - i * 10);
+        for (int i = 0; i < 100; i++) {
+            s = s.substring(i * 1000, s.length());
         }
         long endStrTime = System.currentTimeMillis();
 
         long startCSTime = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            cs = cs.subSequence(i * 10, cs.length() - i * 10);
-            System.out.println(cs.length());
+        for (int i = 0; i < 100; i++) {
+            cs = cs.subSequence(i * 1000, cs.length());
+            //System.out.println(cs.length());
         }
         long endCSTime = System.currentTimeMillis();
 
