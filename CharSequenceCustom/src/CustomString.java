@@ -68,7 +68,7 @@ public class CustomString implements CharSequence, Serializable {
             throw new ArrayIndexOutOfBoundsException();
         } else {
             int tmp = 0;
-            index = index + offsetLeft;
+            index += offsetLeft;
             if (index >= chunkLength) {
                 tmp = index / chunkLength;
             }
@@ -83,6 +83,8 @@ public class CustomString implements CharSequence, Serializable {
         } else if (start > end) {
             return new CustomString();
         } else {
+            start += offsetLeft;
+            end += offsetLeft;
             int startChunk = start / chunkLength;
             int endChunk = end / chunkLength;
             int offLeft = start % chunkLength;
