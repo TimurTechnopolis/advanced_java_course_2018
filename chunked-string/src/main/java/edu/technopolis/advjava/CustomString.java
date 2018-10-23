@@ -1,4 +1,4 @@
-package edu.technopolis;
+﻿package edu.technopolis;
 import java.io.Serializable;
 
 public class CustomString implements CharSequence, Serializable {
@@ -82,6 +82,5 @@ public class CustomString implements CharSequence, Serializable {
         subStr.printStr(subStr);
         System.out.println("Количество символов новой строки: "+subStr.length());
         System.out.println("Шестой символ новой строки: " + subStr.charAt(6));
-        System.out.println("Приведение новой к String: " + subStr.toString());
     }
 }
