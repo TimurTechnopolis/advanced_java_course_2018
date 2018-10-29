@@ -9,7 +9,6 @@ public class CustomString implements CharSequence {
     private int lengthCh = 0;
     private char[][] ch;
 
-    //Начальный конструктор
     public CustomString(String s) {
         offset = 0;
         count = s.length();
@@ -38,17 +37,21 @@ public class CustomString implements CharSequence {
     }
 
     public String toString() {
+        if (ch.length == 0) return "";
         StringBuffer s = new StringBuffer();
-        int i = 0;
-        for (int j = offset % lengthCh; j < count + offset % lengthCh; j++) {
-            if (((j%lengthCh == 0)&&(j!=0))) i+= 1;
+        for (int j = offset % lengthCh,i=0; j < count + offset % lengthCh; j++) {
+            if (((j%lengthCh == 0)&&(j!=0))) i++;
             s.append(ch[i][j % lengthCh]);
         }
         return s.toString();
     }
 
     @Override
-    public char charAt(int i) { return ch[((offset + i) / (ch[0].length))][((offset + i) % (ch[0].length))]; }
+    public char charAt(int i) {
+        int s=  (offset + i) / ch[0].length;
+        int k = ((offset + i) % ch[0].length);
+        return ch[s][k];
+    }
 
     @Override
     public int length() {
