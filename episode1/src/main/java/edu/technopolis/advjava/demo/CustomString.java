@@ -6,7 +6,7 @@ public class CustomString implements CharSequence {
 
     private int offset;
     private int count;
-    private int lengthChunk = 0;
+    private int lengthCh = 0;
     private char[][] ch;
 
 
@@ -14,7 +14,35 @@ public class CustomString implements CharSequence {
         this.ch = ch;
         this.offset = offset;
         this.count = count;
-        this.lengthChunk = lengthChunk;
+        this.lengthCh = lengthChunk;
+    }
+
+    //Начальный конструктор
+    public CustomString(String s) {
+        offset = 0;
+        count = s.length();
+        if(count < 4)lengthCh = count;
+        else {
+            int t = MaxPrimeNumbers(count);
+            if (t != 1) lengthCh = t;
+            else lengthCh = MaxPrimeNumbers(count + 1);
+        }
+        int t = count / lengthCh;
+        ch = new char[t][lengthCh];
+        for (int i = 0, n = 0; i < t; i++)
+            for (int j = 0; j < lengthCh && n < count; j++) { ch[i][j] = s.charAt(n);n++; }
+    }
+
+    public CustomString subString(int start, int end) {
+        if ((end >= count) || (start < offset) || (start > end)) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int tmpLen = ((offset + end)/lengthCh)-((offset + start) / lengthCh);
+        char [][] copArray =  new char[tmpLen+1][lengthCh];
+        for(int i = 0 ; i  <= tmpLen; i++){
+            copArray[i] = ch[(offset + start) / lengthCh + i];
+        }
+        return new CustomString(copArray, (offset + start)%lengthCh, end - start + 1, lengthCh);
     }
 
     private int MaxPrimeNumbers (int c) {
@@ -25,54 +53,20 @@ public class CustomString implements CharSequence {
         }
         return 1;
     }
-    //Начальный конструктор
 
-    public CustomString(String s) {
-        offset = 0;
-        count = s.length();
-        if(count < 4)lengthChunk = count;
-        else {
-            int t = MaxPrimeNumbers(count);
-            if (t != 1) lengthChunk = t;
-            else lengthChunk = MaxPrimeNumbers(count + 1);
+    public String toString() {
+        StringBuffer s = new StringBuffer();
+        int i = 0;
+        for (int j = offset % lengthCh; j < count + offset % lengthCh; j++) {
+            if (((j%lengthCh == 0)&&(j!=0))) i+= 1;
+            s.append(ch[i][j % lengthCh]);
         }
-
-        int amountChunk = count / lengthChunk;
-        ch = new char[amountChunk][lengthChunk];
-        for (int i = 0, m = 0; i < amountChunk; i++) {
-            for (int j = 0; (j < lengthChunk) && (m < count); j++) {
-                ch[i][j] = s.charAt(m);
-                m++;
-            }
-        }
+        return s.toString();
     }
 
     @Override
     public char charAt(int index) {
         return ch[((offset + index) / (ch[0].length))][((offset + index) % (ch[0].length))];
-    }
-
-
-    public CustomString subString(int start, int end) {
-        if ((end >= count) || (start < offset) || (start > end)) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-        int tmpLen = ((offset + end)/lengthChunk)-((offset + start) / lengthChunk);
-        char [][] copArray =  new char[tmpLen+1][lengthChunk];
-        for(int i = 0 ; i  <= tmpLen; i++){
-            copArray[i] = ch[(offset + start) / lengthChunk + i];
-        }
-        return new CustomString(copArray, (offset + start)%lengthChunk, end - start + 1, lengthChunk);
-    }
-
-    public String toString() {
-        StringBuffer s = new StringBuffer();
-        int i = 0;
-        for (int j = offset % lengthChunk; j < count + offset % lengthChunk; j++) {
-            if (((j%lengthChunk == 0)&&(j!=0))) i+= 1;
-            s.append(ch[i][j % lengthChunk]);
-        }
-        return s.toString();
     }
 
     @Override
