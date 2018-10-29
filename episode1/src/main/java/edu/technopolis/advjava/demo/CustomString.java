@@ -9,6 +9,18 @@ public class CustomString implements CharSequence {
     private int lengthCh = 0;
     private char[][] ch;
 
+    //Начальный конструктор
+    public CustomString(String s) {
+        offset = 0;
+        count = s.length();
+        if(count < 4)lengthCh = count;
+        else lengthCh = MaxlengthCh(count);
+
+        int t = count / lengthCh;
+        ch = new char[t][lengthCh];
+        for (int i = 0, n = 0; i < t; i++)
+            for (int j = 0; j < lengthCh && n < count; j++) { ch[i][j] = s.charAt(n);n++; }
+    }
 
     public CustomString(char[][] ch, int offset, int count, int lengthChunk) {
         this.ch = ch;
@@ -17,41 +29,12 @@ public class CustomString implements CharSequence {
         this.lengthCh = lengthChunk;
     }
 
-    //Начальный конструктор
-    public CustomString(String s) {
-        offset = 0;
-        count = s.length();
-        if(count < 4)lengthCh = count;
-        else {
-            int t = MaxPrimeNumbers(count);
-            if (t != 1) lengthCh = t;
-            else lengthCh = MaxPrimeNumbers(count + 1);
-        }
-        int t = count / lengthCh;
-        ch = new char[t][lengthCh];
-        for (int i = 0, n = 0; i < t; i++)
-            for (int j = 0; j < lengthCh && n < count; j++) { ch[i][j] = s.charAt(n);n++; }
-    }
-
-    public CustomString subString(int start, int end) {
-        if ((end >= count) || (start < offset) || (start > end)) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-        int tmpLen = ((offset + end)/lengthCh)-((offset + start) / lengthCh);
-        char [][] copArray =  new char[tmpLen+1][lengthCh];
-        for(int i = 0 ; i  <= tmpLen; i++){
-            copArray[i] = ch[(offset + start) / lengthCh + i];
-        }
-        return new CustomString(copArray, (offset + start)%lengthCh, end - start + 1, lengthCh);
-    }
-
-    private int MaxPrimeNumbers (int c) {
+    private int MaxlengthCh (int c) {
         int k = (int)Math.sqrt(c);
-        while (k > 0) {
-            if ((c%k) == 0) return k;
-            k--;
-        }
-        return 1;
+        while (k > 0) { if ((c%k) == 0) break;k--;}
+        if (k<=0) k=1;
+        if (k != 1) return k;
+        else return MaxlengthCh(c + 1);
     }
 
     public String toString() {
@@ -65,9 +48,7 @@ public class CustomString implements CharSequence {
     }
 
     @Override
-    public char charAt(int index) {
-        return ch[((offset + index) / (ch[0].length))][((offset + index) % (ch[0].length))];
-    }
+    public char charAt(int i) { return ch[((offset + i) / (ch[0].length))][((offset + i) % (ch[0].length))]; }
 
     @Override
     public int length() {
