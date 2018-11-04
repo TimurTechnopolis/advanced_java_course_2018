@@ -3,19 +3,19 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 public class CustomString implements CharSequence , Serializable {
-    private char[][] string;
-    private int offset;
-    private final static int defaultLength = 8;//16;
-    private int lineLength;
-    private int length;
+    private final char[][] chunks;
+    
+    private final int length; // размер всего объекта
 
+    private final int offset; // смещение от начального символа
 
-    public CustomString() {
-        this.string = new char[0][0];
-        this.offset = 0;
-        this.lineLength = defaultLength;
-        this.length = 0;
-    }
+    private final int lineLength; // длина одной строки
+
+    /** Планируется, что длина чанка задастся пользователем
+     * в ином случае задается дефолтная длина строки в тексте
+     * - 128 символов(просто это не так чтоб слишком много, но в то же время
+     * и не слишком мало для одной строки*/
+    private final static int defaultLength = 128;
 
     public CustomString(String str) {
         this.offset = 0;
@@ -25,44 +25,28 @@ public class CustomString implements CharSequence , Serializable {
         } else {
             lineLength = defaultLength + 1;
         }
-        this.string = new char[length / lineLength + 1][lineLength];
+        this.chunks = new char[length / lineLength + 1][lineLength];
         for(int i = 0; i < length; i++){
-            this.string[i / lineLength][i % lineLength] = str.charAt(i);
+            this.chunks[i / lineLength][i % lineLength] = str.charAt(i);
         }
     }
-    public CustomString(char[][] string, int lineLength, int offset, int length) {
+    
+    public CustomString(char[][] chunks, int lineLength, int offset, int length) {
         this.offset = offset;
-        this.string = string;
+        this.chunks = chunks;
         this.length = length;
         this.lineLength = lineLength;
     }
 
-    public CustomString(char[][] string, int offset, int length) {
-        this.string = string;
-        this.offset = offset;
-        this.length = length;
-        this.lineLength = defaultLength;
+    public CustomString(char[][] chunks, int offset, int length) {
+        this(chunks, offset, length, defaultLength);
     }
 
     public CustomString(CustomString original) {
-        this.string = original.string;
+        this.chunks = original.chunks;
         this.offset = original.offset;
         this.lineLength = original.lineLength;
         this.length = length();
-    }
-
-    public CustomString(char value[]) {
-        this.offset = 0;
-        this.length = value.length;
-        if (length % defaultLength == 0){
-            lineLength = defaultLength;
-        } else {
-            lineLength = defaultLength + 1;
-        }
-        this.string = new char[length / lineLength][lineLength];
-        for(int i = 0; i < length; i++){
-            this.string[i / lineLength][i % lineLength] = value[i];
-        }
     }
 
     @Override
@@ -74,7 +58,7 @@ public class CustomString implements CharSequence , Serializable {
     public char charAt(int index) {
         int line = (offset + index) / lineLength;
         int elem = (offset + index) % lineLength;
-        return string[line][elem];
+        return chunks[line][elem];
     }
 
     @Override
@@ -88,7 +72,7 @@ public class CustomString implements CharSequence , Serializable {
         }
         int from = (start + this.offset) / lineLength;
         int to = 1 + (end + this.offset) / lineLength;
-        char[][] newString = Arrays.copyOfRange(string, from, to);
+        char[][] newString = Arrays.copyOfRange(chunks, from, to);
         return new CustomString(newString, lineLength,(start + this.offset) % lineLength, end - start);
     }
 
@@ -96,7 +80,7 @@ public class CustomString implements CharSequence , Serializable {
     public String toString() {
         var buffer = new StringBuilder();
         for(int i = offset; i < length + offset; i++){
-            buffer.append(this.string[i / lineLength][i % lineLength]);
+            buffer.append(this.chunks[i / lineLength][i % lineLength]);
         }
         return buffer.toString();
     }
