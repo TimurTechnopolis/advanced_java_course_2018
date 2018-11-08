@@ -1,1 +1,4 @@
 *.class
+*.html
+*.xml
+*.iml
