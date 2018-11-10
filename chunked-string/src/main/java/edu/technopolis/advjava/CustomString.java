@@ -1,7 +1,6 @@
 package edu.technopolis.advjava;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * Реализованная специальным образом строка (аналог {@link java.lang.String}),
@@ -17,7 +16,7 @@ public class CustomString implements CharSequence, Serializable {
 
     private final int count;
 
-    public CustomString(char[][] values, int lengthChunk, int offset, int count) {
+    private CustomString(char[][] values, int lengthChunk, int offset, int count) {
         this.values=values;
         this.lengthChunk = lengthChunk;
         this.offset = offset;
@@ -27,7 +26,7 @@ public class CustomString implements CharSequence, Serializable {
     public CustomString(String value) {
         this.offset=0;
         this.count=value.length();
-        this.lengthChunk=((int)Math.sqrt(value.length()))+1;
+        this.lengthChunk=optimalLenght(value.length());
         int amountOfChunk = this.count%this.lengthChunk==0 ? this.count/this.lengthChunk : this.count/this.lengthChunk+1 ;
         this.values=new char[amountOfChunk][this.lengthChunk];
         for (int chunk=0,mainIndex=0;chunk<amountOfChunk;chunk++){
@@ -39,6 +38,38 @@ public class CustomString implements CharSequence, Serializable {
                 }
             }
         }
+    }
+    private int optimalLenght(int length) {
+        int sqrtLen=(int)Math.sqrt(length);
+        int rightLenght;
+        if (length%sqrtLen==0&&sqrtLen!=1){
+            rightLenght=((int)Math.sqrt(length));
+
+        }else{
+            rightLenght=((int)Math.sqrt(length))+1;
+        }
+        int leftLenght=rightLenght;
+
+        int rightRemainder=length%rightLenght;
+        int next = length%(++rightLenght);
+
+        while (next>rightRemainder&&rightRemainder!=0){
+            rightRemainder=next;
+            next=length%(++rightLenght);
+        }
+        rightLenght--;
+        int leftRemaider=length%leftLenght;
+        int previouse=length%(--leftLenght);
+        while (previouse>leftRemaider&&leftRemaider!=0){
+            leftRemaider=previouse;
+            previouse=length%(--leftLenght);
+        }
+        leftLenght++;
+        if (leftLenght==1) return rightLenght;
+        if (rightRemainder>leftRemaider){
+            return rightLenght;
+        }else
+            return leftLenght;
     }
 
     public CustomString(String value,int lengthChunk) {
@@ -76,7 +107,7 @@ public class CustomString implements CharSequence, Serializable {
     @Override
     public CharSequence subSequence(int start, int end) {
         if(start<offset||end>=count){
-            throw new ArrayIndexOutOfBoundsException();
+            throw  new ArrayIndexOutOfBoundsException();
         }
         int chunkNumberStart=start/this.lengthChunk;
         int chunkNumberEnd=end%this.lengthChunk==0 ? end/this.lengthChunk: end/this.lengthChunk + 1;
@@ -103,5 +134,4 @@ public class CustomString implements CharSequence, Serializable {
         }
         return result.toString();
     }
-
 }
