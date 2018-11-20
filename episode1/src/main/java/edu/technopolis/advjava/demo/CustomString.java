@@ -2,7 +2,6 @@ package edu.technopolis.advjava.demo;
 
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import com.sun.xml.internal.fastinfoset.util.CharArray;
@@ -15,28 +14,37 @@ import com.sun.xml.internal.fastinfoset.util.CharArray;
 public class CustomString implements CharSequence, Serializable {
     private final char[][] chunks;
     private final int length;
+    private final int offset;
+    private int DEFAULT_CHUNK_SIZE;
 
 
-
-    CustomString(char[] arr){
-        length = arr.length;
-        int rounded = (int)Math.ceil(Math.sqrt(length));
-        chunks = new char[rounded][rounded];
-        for(int i = 0;i < length;i++){
-                chunks[i / rounded][i % rounded] = arr[i];
-
+    private CustomString(char[][] chunks, int offset, int length) {
+        this.chunks = chunks;
+        this.offset = offset;
+        this.length = length;
+    }
+    public CustomString(String string,int chunkSize) {
+        DEFAULT_CHUNK_SIZE = chunkSize;
+        char[] charSequence = string.toCharArray();
+        this.length = charSequence.length;
+        this.chunks = new char[Math.floorDiv(length, DEFAULT_CHUNK_SIZE) + 1][DEFAULT_CHUNK_SIZE];
+        this.offset = 0;
+        int chunk = 0;
+        int charIndex = 0;
+        for (char c: charSequence) {
+            if (charIndex == DEFAULT_CHUNK_SIZE) {
+                charIndex = 0;
+                chunk++;
+            }
+            this.chunks[chunk][charIndex] = c;
+            charIndex++;
         }
     }
 
-    CustomString(String string){
-        length = string.length();
-        int rounded = (int)Math.ceil(Math.sqrt(length));
-        chunks = new char[rounded][rounded];
-        for(int i = 0;i < length;i++){
-                chunks[i / rounded][i % rounded] = string.charAt(i);
-
-        }
+    public CustomString(String string) {
+        this(string,10000);
     }
+
     @Override
     public int length() {
         return length;
@@ -44,36 +52,36 @@ public class CustomString implements CharSequence, Serializable {
 
     @Override
     public char charAt(int index) {
-        int rounded = (int)Math.ceil(Math.sqrt(length));
-        return chunks[index / rounded][index % rounded];
+        int chunkIndex = (offset + index) / DEFAULT_CHUNK_SIZE;
+        int charIndex = (offset + index) % DEFAULT_CHUNK_SIZE;
+        return chunks[chunkIndex][charIndex];
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        int rounded = (int)Math.ceil(Math.sqrt(length));
-        char[] chars = new char[end-start];
-        for(int i = start; i < end;i++){
-            chars[i-start] = chunks[i / rounded][i % rounded];
-        }
-        return new CustomString(chars);
+        int startChunk = (offset + start) / DEFAULT_CHUNK_SIZE;
+        int startCharIndex = (offset + start) % DEFAULT_CHUNK_SIZE;
+        int endChunk = (offset + end) / DEFAULT_CHUNK_SIZE;
+        char[][] newChunks;
+        newChunks = Arrays.copyOfRange(chunks, startChunk, endChunk);
+        return new CustomString(newChunks, startCharIndex, end - start);
     }
 
 
     @Override
     public String toString() {
-        char[] arr = new char[length];
-        int rounded = (int)Math.ceil(Math.sqrt(length));
-        for(int i = 0;i < length;i++) {
-            arr[i] = chunks[i / rounded][i % rounded];
+        StringBuilder sb = new StringBuilder();
+        for (char[] chunk: chunks) {
+            sb.append(chunk);
         }
-        return new String(arr);
+        return sb.substring(offset, offset + length);
     }
 
     public static void main(String[] args) {
-       System.out.println(new CustomString(new char[]{'c','d','c','e'}));
-       String st = "Java is the best";
-       System.out.println(new CustomString(st).subSequence(0,st.length()));
-
+        String st = "Java is the best";
+        System.out.println(new CustomString(st,8).subSequence(5,16));
+        System.out.println(new CustomString(st));
+        System.out.println(new CustomString(st,1));
 
     }
 
