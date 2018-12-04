@@ -47,10 +47,7 @@ public class CustomString implements CharSequence, Serializable{
 
     @Override
     public int length() {
-        if(count == 0)
-            return dataLength;
-        else
-            return count;
+        return (count == 0) ? dataLength : count;
     }
 
     @Override
