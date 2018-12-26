@@ -1,6 +1,7 @@
 package edu.technopolis;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Реализованная специальным образом строка (аналог {@link java.lang.String}),
@@ -8,13 +9,14 @@ import java.io.Serializable;
  * создании подстрок.
  */
 public class CustomString implements CharSequence, Serializable{
-    private int offset;
-    private int count;
-    private char[][] data;
-    private int chunkLength = 10;
-    private int dataLength;
+    private int offset;              //индекс с которого начинается подстрока
+    private int count;               //длина хранимой подстроки
+    private char[][] data;           //строка, разбитая на кусочки
+    private int chunkLength = 10;    //длина кусочков
+    private int dataLength;          //общая длина строки
 
     public CustomString(String inputString) {
+        Objects.requireNonNull(inputString);
         if(inputString.length() == 0){
             return;
         }
@@ -52,11 +54,17 @@ public class CustomString implements CharSequence, Serializable{
 
     @Override
     public char charAt(int index) {
+        if (index < 0 || index >= count) {
+            throw new IndexOutOfBoundsException();
+        }
         return data[(offset+index)/chunkLength][(offset+index)%chunkLength];
     }
 
     @Override
     public CustomString subSequence(int start, int end) {
+        if (start < 0 || start > end || end > length()) {
+            throw new IndexOutOfBoundsException();
+        }
         return new CustomString(offset + start, end - start, data, dataLength);
     }
 
